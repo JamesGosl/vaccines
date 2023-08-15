@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>个人信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../css/public.css" media="all">
+    <link rel="stylesheet" href="../../../js/lay-module/step-lay/step.css" media="all">
+    <script src="../../../js/combat/axios.js"></script>
+    <script src="../../../js/combat/province.js"></script>
+</head>
+<style>
+    .layui-form-select dl {
+        max-height: 150px;  /* 这里根据实际情况设置相应的下拉弹出选项框的最大高度 */
+    }
+</style>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-fluid">
+            <div class="layui-card">
+                <div class="layui-card-body" style="padding-top: 40px;">
+                    <div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
+                        <div carousel-item>
+                            <div>
+                                <form class="layui-form" style="margin: 0 auto;max-width: 500px;padding-top: 40px;">
+                                    <div class="layui-form-item"></div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">姓名:</label>
+                                        <div class="layui-input-block">
+                                            <span style="font-size: 18px;color: #333;" id="name"></span>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item"></div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">手机号:</label>
+                                        <div class="layui-input-block">
+                                            <span style="font-size: 18px;color: #333;" id="phone"></span>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item"></div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">地址:</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-form-mid layui-word-aux">
+                                                <span style="font-size: 18px;color: #333;" id="path"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item"></div>
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button class="layui-btn" lay-submit lay-filter="formStep">
+                                                &emsp;修改&emsp;
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div>
+                                <form class="layui-form" style="margin: 0 auto;max-width: 720px;padding-top: 40px;">
+                                    <div class="layui-form-item"></div>
+                                    <div class="layui-form-item"></div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">姓名:</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="name" id="new_name" placeholder="请填写入姓名" class="layui-input" lay-verify="text" required />
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item"></div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">手机号:</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="phone" id="new_phone" placeholder="请填写入手机号" class="layui-input" lay-verify="required|phone" required>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item"></div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">地址:</label>
+                                        <div class="layui-input-inline" style="height: 100px">
+                                            <select name="province" id="province" lay-filter="province">
+                                                <option value="">请选择省</option>
+                                            </select>
+                                        </div>
+                                        <div class="layui-input-inline">
+                                            <select name="city" id="city" lay-filter="city">
+                                                <option value="">请选择市</option>
+                                            </select>
+                                        </div>
+                                        <div class="layui-input-inline">
+                                            <select name="district" id="district" lay-filter="district">
+                                                <option value="">请选择县/区</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button type="button" class="layui-btn layui-btn-primary pre">取消</button>
+                                            <button class="layui-btn" lay-submit lay-filter="formStep2">
+                                                &emsp;确认&emsp;
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div>
+                                <div style="text-align: center;margin-top: 90px;">
+                                    <i class="layui-icon layui-circle"
+                                       style="color: white;font-size:30px;font-weight:bold;background: #52C41A;padding: 20px;line-height: 80px;">&#xe605;</i>
+                                    <div style="font-size: 24px;color: #333;font-weight: 500;margin-top: 30px;">
+                                        修改成功
+                                    </div>
+                                    <div style="font-size: 14px;color: #666;margin-top: 20px;" id="date"></div>
+                                </div>
+                                <div style="text-align: center;margin-top: 50px;">
+                                    <button class="layui-btn next">查看信息</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="../../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use([ 'form', 'step'], function () {
+        var $ = layui.$,
+            form = layui.form,
+            step = layui.step;
+
+        step.render({
+            elem: '#stepForm',
+            filter: 'stepForm',
+            width: '100%', //设置容器宽度
+            stepWidth: '650px',
+            height: '500px',
+            stepItems: [{
+                title: '个人信息'
+            }, {
+                title: '修改信息'
+            }, {
+                title: '完成'
+            }]
+        });
+
+        let flag = true;
+
+        function loadPath() {
+            // 加载省市区
+            var provinces = ['<option value="">请选择省</option>'];
+            for(var i = 0, len = province.length; i < len; i++) {
+                var provOpt = document.createElement("option");
+                provOpt.innerText = province[i].name;
+                provOpt.value = province[i].name;
+                provinces.push(provOpt);
+            }
+            $("#province").html(provinces);
+            form.render();
+        }
+
+        $(document).ready(function () {
+            axios.defaults.withCredentials = true;
+            axios.post('/person/findThis')
+                .then(function(response){
+                    console.log(response);
+                    if (response.data.success) {
+                        data = response.data.data;
+                        $("#name").html(data.name);
+                        $("#phone").html(data.phone);
+                        $("#path").html(data.path);
+                    } else {
+                        layer.msg('暂未数据', {icon: 2, time:3000, shade:0.4});
+
+                        loadPath();
+
+                        flag = false;
+
+                        setTimeout(function () {
+                            step.next('#stepForm');
+                        }, 1000);
+                    }
+                })
+                .catch(function(error){
+                    console.log(error);
+                });
+        });
+
+        let pro = "";
+        let city = "";
+        let district = "";
+
+        form.on('select(province)', function (data) {
+            pro = data.value;
+
+            for(var i = 0, len = province.length; i < len; i++) {
+                if (province[i].name === pro) {
+                    var citys = ['<option value="">请选择市</option>'];
+                    for(var l = 0, le = province[i].city.length; l < le; l++) {
+                        var provOpt = document.createElement("option");
+                        provOpt.innerText = province[i].city[l].name;
+                        provOpt.value = province[i].city[l].name;
+                        citys.push(provOpt);
+                    }
+                    $("#city").html(citys);
+                    break;
+                }
+            }
+
+            city = "";
+            district = "";
+            $("#district").html('<option value="">请选择县/区</option>');
+            form.render();
+        });
+
+
+        form.on('select(city)', function (data) {
+            city = data.value;
+
+            for(var i = 0, len = province.length; i < len; i++) {
+                if (province[i]['name'] === pro) {
+                    for(var l = 0, le = province[i].city.length; l < le; l++) {
+                        if(province[i].city[l].name === city) {
+                            var districts = ['<option value="">请选择县/区</option>'];
+
+                            for (let j = 0; j < province[i].city[l].districtAndCounty.length; j++) {
+                                var provOpt = document.createElement("option");
+                                provOpt.innerText = province[i].city[l].districtAndCounty[j];
+                                provOpt.value = province[i].city[l].districtAndCounty[j];
+                                districts.push(provOpt);
+                            }
+                            $("#district").html(districts);
+                            form.render();
+                            return;
+                        }
+                    }
+                }
+            }
+
+            $("#district").html('<option value="">暂无数据</option>');
+            form.render();
+        });
+
+        form.on('select(district)', function (data) {
+            district = data.value;
+        });
+
+        form.on('submit(formStep)', function (data) {
+            let name = $("#name").html();
+            let phone = $("#phone").html();
+
+            $("#new_name").val(name);
+            $("#new_phone").val(phone);
+
+
+            loadPath();
+
+            step.next('#stepForm');
+            return false;
+        });
+
+        let person = {};
+
+        form.on('submit(formStep2)', function (data) {
+            data = data.field;
+
+            if (data.name === '') {
+                layer.msg('姓名不能为空', {icon: 7, time:1000, shade:0.4});
+                return false;
+            }
+            if (data.province === '') {
+                layer.msg('省不能为空', {icon: 7, time:1000, shade:0.4});
+                return false;
+            }
+            if (data.city === '') {
+                layer.msg('市不能为空', {icon: 7, time:1000, shade:0.4});
+                return false;
+            }
+            if (data.district === '') {
+                layer.msg('区/县不能为空', {icon: 7, time:1000, shade:0.4});
+                return false;
+            }
+
+            person.name = data.name;
+            person.phone = data.phone;
+            person.path = data.province + "-" + data.city + "-" + data.district;
+
+
+            axios.post(flag ? '/person/editThis' : '/person/addThis', person)
+                .then(function(response){
+                    if (response.data.code === 10000) {
+                        $("#date").html(new Date());
+                        step.next('#stepForm');
+                    } else {
+                        layer.msg('创建失败', {icon: 2, time:1000, shade:0.4});
+                    }
+                })
+                .catch(function(error){
+                    console.log(error);
+                });
+            return false;
+        });
+
+        $('.pre').click(function () {
+            step.pre('#stepForm');
+        });
+
+        $('.next').click(function () {
+            $("#name").html(person.name);
+            $("#phone").html(person.phone);
+            $("#path").html(person.path);
+
+            $(".layui-form")[0].reset();
+            layui.form.render();
+
+            step.next('#stepForm');
+        });
+    })
+</script>
+</body>
+</html>

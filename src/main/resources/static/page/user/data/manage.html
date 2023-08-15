@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../css/public.css" media="all">
+    <script src="../../../js/combat/axios.js"></script>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+    </div>
+
+    <div id="zyupload"></div>
+</div>
+<script src="../../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            upload = layui.upload;
+
+        let username = "";
+
+        $(document).ready(function () {
+            axios.get('/user/isLogin')
+                .then(function (response) {
+                    if (response.data.code === 10001) {
+                        layer.msg('暂未登录', {icon: 5, time:1000, shade:0.4});
+                        setTimeout(function () {
+                            location.href = "../../login.html";
+                        }, 1000)
+                    } else {
+                        username = response.data.data.username;
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        });
+
+        table.render({
+            elem: '#currentTableId',
+            url: '/user/findRecord',
+            // url: '../../../api/table.json',
+            method: "POST",
+            response: {
+                statusCode: 10000,
+            },
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [[
+                {field: 'id', minWidth: 80, title: 'ID', sort: true},
+                {field: 'username', minWidth: 150, title: '账号'},
+                {field: 'name', minWidth: 150, title: '昵称'},
+                {width: 80, title: '状态', templet: function (data) {
+                        return data.state === 1 ? "有记录" : "无记录";
+                    }, align: 'center'},
+                {title: '操作', minWidth: 150, templet: function (data) {
+                        return data.state === 1
+                            ? '<a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="show">查看</a><a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="download">下载</a>'
+                            : data.username === username
+                            ? '<a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="upload">上传</a>'
+                            : '';
+
+                    }, align: 'center'},
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'line'
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+
+            console.log(obj);
+            if (obj.event === 'upload') {
+                var index = layer.open({
+                    title: '上传文件',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: './upload.html',
+                    success: function (layero, index) {
+                        window['layui-layer-iframe' + index].onload(data);
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            }
+            else if (obj.event === 'show') {
+                var index = layer.open({
+                    title: '查看信息',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: './show.html',
+                    success: function (layero, index) {
+                        window['layui-layer-iframe' + index].onload(data);
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            }
+            else if (obj.event === 'download') {
+                parent.window.open(`/vaccines/download/${data.id}`);
+            }
+
+            // if (obj.event === 'edit') {
+            //     var index = layer.open({
+            //         title: '编辑用户',
+            //         type: 2,
+            //         shade: 0.2,
+            //         maxmin:true,
+            //         shadeClose: true,
+            //         area: ['100%', '100%'],
+            //         content: './edit.html',
+            //         success: function (layero, index) {
+            //             window['layui-layer-iframe' + index].onload(data);
+            //         }
+            //     });
+            //     $(window).on("resize", function () {
+            //         layer.full(index);
+            //     });
+            //     return false;
+            // } else if (obj.event === 'delete') {
+            //     layer.confirm('真的删除行么', function (index) {
+            //         del([data.id]);
+            //     });
+            // }
+        });
+    });
+</script>
+
+</body>
+</html>

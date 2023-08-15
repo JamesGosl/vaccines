@@ -1,0 +1,65 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "page/welcome.html"
+  },
+  "logoInfo": {
+    "title": "VACCINES",
+    "image": "images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "信息管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+          {
+            "title": "个人信息",
+            "href": "page/person.html",
+            "icon": "fa fa-user",
+            "target": "_self"
+          },
+          {
+            "title": "过敏史记录",
+            "href": "page/welcome-2.html",
+            "icon": "fa fa-medkit",
+            "target": "_self"
+          },
+          {
+            "title": "病例史记录",
+            "href": "page/welcome-3.html",
+            "icon": "fa fa-heartbeat",
+            "target": "_self"
+          },
+          {
+            "title": "接种记录",
+            "href": "page/welcome-3.html",
+            "icon": "fa fa-eyedropper",
+            "target": "_self"
+          }
+      ]
+    },
+    {
+      "title": "账号管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+          {
+            "title": "账号管理",
+            "href": "page/admin/account/manage.html",
+            "icon": "fa fa-cog",
+            "target": "_self"
+          },
+          {
+            "title": "添加账号",
+            "href": "page/admin/account/add.html",
+            "icon": "fa fa-plus-square-o",
+            "target": "_self"
+          }
+      ]
+    }
+  ]
+}

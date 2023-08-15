@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: vaccines
+  profiles:
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  mvc:
+    static-path-pattern: "/**"
+
+jwt:
+  secret: vaccines
+
+vaccines:
+  security: 4

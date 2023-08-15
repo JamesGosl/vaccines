@@ -1,0 +1,47 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "page/welcome.html"
+  },
+  "logoInfo": {
+    "title": "VACCINES",
+    "image": "images/logo.jpg",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "信息管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+          {
+            "title": "接种记录",
+            "href": "page/user/data/manage.html",
+            "icon": "fa fa-eyedropper",
+            "target": "_self"
+          }
+      ]
+    },
+    {
+      "title": "账号管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+          {
+            "title": "账号管理",
+            "href": "page/admin/manage.html",
+            "icon": "fa fa-cog",
+            "target": "_self"
+          },
+          {
+            "title": "添加账号",
+            "href": "page/admin/add.html",
+            "icon": "fa fa-plus-square-o",
+            "target": "_self"
+          }
+      ]
+    }
+  ]
+}

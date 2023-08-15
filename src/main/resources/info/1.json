@@ -1,0 +1,59 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "page/welcome.html"
+  },
+  "logoInfo": {
+    "title": "VACCINES",
+    "image": "images/logo.jpg",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "信息管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "个人信息",
+          "href": "page/person.html",
+          "icon": "fa fa-user",
+          "target": "_self"
+        },
+        {
+          "title": "病人信息",
+          "href": "page/user/data/manage.html",
+          "icon": "fa fa-group",
+          "target": "_self"
+        }
+      ]
+    },
+    {
+      "title": "授权管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "病人列表",
+          "href": "page/user/auth/user.html",
+          "icon": "fa fa-folder-open-o",
+          "target": "_self"
+        },
+        {
+          "title": "添加病人",
+          "href": "page/user/auth/user_search.html",
+          "icon": "fa fa-search",
+          "target": "_self"
+        },
+        {
+          "title": "授权通知",
+          "href": "page/user/auth/auth.html",
+          "icon": "fa fa-bell-o",
+          "target": "_self"
+        }
+      ]
+    }
+  ]
+}
