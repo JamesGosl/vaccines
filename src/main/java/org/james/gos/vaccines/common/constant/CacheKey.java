@@ -12,4 +12,9 @@ public class CacheKey {
      * 权限信息
      */
     public static final String AUTH = "auth";
+
+    /**
+     * 账户信息
+     */
+    public static final String ACCOUNT = "account";
 }

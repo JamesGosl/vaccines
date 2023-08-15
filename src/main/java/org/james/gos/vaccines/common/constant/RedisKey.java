@@ -10,14 +10,14 @@ public class RedisKey {
     private static final String BASE_KEY = "vaccines:";
 
     /**
-     * 权限信息
+     * 令牌
      */
-    public static final String AUTH_STRING_JSON = "auth:id_%d";
+    public static final String TOKEN = "token:%d";
 
     /**
-     * 权限所有信息
+     * 账户
      */
-    public static final String AUTH_STRING_JSON_ALL = "auth:all";
+    public static final String ACCOUNT = "account:%d";
 
 
     /**

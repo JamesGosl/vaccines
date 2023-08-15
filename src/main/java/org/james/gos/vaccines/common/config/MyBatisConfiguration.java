@@ -55,6 +55,7 @@ public class MyBatisConfiguration {
         // 配置中心
         Configuration configuration = new Configuration();
         configuration.setCacheEnabled(false);
+        configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactoryBean.setConfiguration(configuration);
 //		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 //		sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:sql/mapper/*.xml"));

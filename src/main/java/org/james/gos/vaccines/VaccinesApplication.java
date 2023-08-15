@@ -11,20 +11,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
-//@ComponentScans({
-//		@ComponentScan(
-//				basePackages = "org.james.gos.vaccines"
-////				includeFilters = {
-////						@ComponentScan.Filter(Configuration.class),
-////						@ComponentScan.Filter(Controller.class),
-////						@ComponentScan.Filter(Service.class),
-////						@ComponentScan.Filter(Component.class),
-////				}
-//		)
-//})
-//@SpringBootConfiguration
-//@EnableAutoConfiguration
-@SpringBootApplication
+@ComponentScans({
+		@ComponentScan(
+				basePackages = "org.james.gos.vaccines"
+//				includeFilters = {
+//						@ComponentScan.Filter(Configuration.class),
+//						@ComponentScan.Filter(Controller.class),
+//						@ComponentScan.Filter(Service.class),
+//						@ComponentScan.Filter(Component.class),
+//				}
+		)
+})
+@SpringBootConfiguration
+@EnableAutoConfiguration
 public class VaccinesApplication {
 
 	public static void main(String[] args) {

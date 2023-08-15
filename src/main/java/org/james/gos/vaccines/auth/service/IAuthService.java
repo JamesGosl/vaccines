@@ -26,4 +26,12 @@ public interface IAuthService {
      * @return 权限信息
      */
     AuthResp getAuth(Long id);
+
+    /**
+     * 根据auth 获取权限信息
+     *
+     * @param auth id
+     * @return 权限信息
+     */
+    AuthResp getAuth(Integer auth);
 }

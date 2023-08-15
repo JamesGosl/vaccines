@@ -60,7 +60,7 @@ public class LogicSqlInjector extends BaseSqlInjector {
                 for (Field field : fields) {
                     example.and().andEqualTo(field.getName(), deletedDefault);
                 }
-                return boundSql;
+                return mappedStatement.getBoundSql(generic);
             }
 
             // 处理接口泛型类型

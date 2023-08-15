@@ -7,6 +7,7 @@ import org.james.gos.vaccines.common.constant.CacheKey;
 import org.james.gos.vaccines.common.utils.CacheUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -37,7 +38,7 @@ public class AuthCache {
     /**
      * 根据ID 获取权限信息
      */
-    @Cacheable(cacheNames = CacheKey.AUTH, key =  "'auth-' + #id")
+    @Cacheable(cacheNames = CacheKey.AUTH, key =  "'byId-' + #id")
     public Auth getAuth(Long id) {
         log.debug("未击中缓存-{}", id);
 
@@ -48,5 +49,23 @@ public class AuthCache {
             auth = auths.stream().filter(a -> a.getId().equals(id)).findFirst().orElse(null);
         }
         return auth == null ? authMapper.selectByPrimaryKey(id) : auth;
+    }
+
+    /**
+     * 根据auth 获取权限信息
+     */
+    @Cacheable(cacheNames = CacheKey.AUTH, key =  "'byAuth-' + #auth")
+    public Auth getAuth(Integer auth) {
+        log.debug("未击中缓存-{}", auth);
+
+        List<Auth> auths = CacheUtils.get(CacheKey.AUTH, "authList");
+
+        if (auths != null) {
+            return auths.stream().filter(a -> a.getAuth().equals(auth)).findFirst().orElse(null);
+        }
+
+        Example example = new Example(Auth.class);
+        example.createCriteria().andEqualTo("auth", auth);
+        return authMapper.selectOneByExample(example);
     }
 }

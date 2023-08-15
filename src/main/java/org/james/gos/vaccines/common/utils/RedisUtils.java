@@ -35,6 +35,16 @@ public class RedisUtils {
         }
     }
 
+    /**
+     * 删除缓存
+     *
+     * @param key 键
+     * @return true 成功，false 失败
+     */
+    public static Boolean del(String key) {
+        return stringRedisTemplate.delete(key);
+    }
+
 
     /**
      * 普通取出值

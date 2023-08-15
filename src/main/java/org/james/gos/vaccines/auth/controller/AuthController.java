@@ -7,7 +7,6 @@ import org.james.gos.vaccines.auth.service.IAuthService;
 import org.james.gos.vaccines.common.doman.vo.request.IdReq;
 import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,7 +34,7 @@ public class AuthController {
 
     @GetMapping
     @ApiOperation("根据ID获取权限信息")
-    public ApiResult<AuthResp> getAuth(@Valid IdReq idReq){
+    public ApiResult<AuthResp> getAuth(@Valid IdReq idReq) {
         return ApiResult.success(authService.getAuth(idReq.getId()));
     }
 }

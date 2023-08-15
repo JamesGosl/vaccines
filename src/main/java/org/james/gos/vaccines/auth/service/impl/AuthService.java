@@ -35,4 +35,9 @@ public class AuthService implements IAuthService {
     public AuthResp getAuth(Long id) {
         return AuthAdapter.buildAuthResp(authCache.getAuth(id));
     }
+
+    @Override
+    public AuthResp getAuth(Integer auth) {
+        return AuthAdapter.buildAuthResp(authCache.getAuth(auth));
+    }
 }
