@@ -1,5 +1,7 @@
 package org.james.gos.vaccines.auth.doman.vo.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,6 +17,7 @@ import lombok.Data;
 public class AuthResp {
 
     @ApiModelProperty(value = "权限ID")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     @ApiModelProperty(value = "权限 0为管理员，1为医生，2为接种者")
     private Integer auth;

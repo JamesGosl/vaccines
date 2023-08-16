@@ -23,6 +23,9 @@ public class ApiResult<T> {
     @ApiModelProperty("返回对象")
     private T data;
 
+    @ApiModelProperty("响应码")
+    private Integer code = 0;
+
     public static <T> ApiResult<T> success() {
         ApiResult<T> result = new ApiResult<T>();
         result.setData(null);

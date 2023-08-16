@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * 全局异常处理器
+ * 全局异常处理器(拦截器的异常也会拦截)
  *
  * @author James Gosl
  * @since 2023/08/15 17:42

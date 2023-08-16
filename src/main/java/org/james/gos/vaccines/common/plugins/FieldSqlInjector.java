@@ -1,5 +1,6 @@
 package org.james.gos.vaccines.common.plugins;
 
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -38,22 +39,41 @@ public class FieldSqlInjector extends BaseSqlInjector {
         BoundSql boundSql = statementHandler.getBoundSql();
 
         // 处理插入操作 insert/insertSelective
-        if(sqlCommandType == SqlCommandType.INSERT || sqlCommandType == SqlCommandType.UPDATE
-                || sqlCommandType == SqlCommandType.DELETE) {
+        if(sqlCommandType == SqlCommandType.INSERT || sqlCommandType == SqlCommandType.UPDATE) {
             Object generic = getValue("boundSql.parameterObject", metaObject);
 
             List<Field> fields = getGenericToField(genericClass);
 
-            for (Field field : fields) {
-                TableField tableField = field.getAnnotation(TableField.class);
-                FieldFill fill = tableField.fill();
-                if(sqlCommandType == SqlCommandType.INSERT) {
-                    if (fill == FieldFill.INSERT || fill == FieldFill.INSERT_UPDATE) {
-                        field.set(generic, new Date());
+            if(generic instanceof MapperMethod.ParamMap) {
+                MapperMethod.ParamMap<Object> map = (MapperMethod.ParamMap<Object>) generic;
+                Object o = map.get("record");
+                for (Field field : fields) {
+                    TableField tableField = field.getAnnotation(TableField.class);
+                    FieldFill fill = tableField.fill();
+                    if(sqlCommandType == SqlCommandType.INSERT) {
+                        if (fill == FieldFill.INSERT || fill == FieldFill.INSERT_UPDATE) {
+                            field.set(o, new Date());
+                        }
+                    } else {
+                        if (fill == FieldFill.UPDATE || fill == FieldFill.INSERT_UPDATE) {
+                            field.set(o, new Date());
+                        }
                     }
-                } else {
-                    if (fill == FieldFill.UPDATE || fill == FieldFill.INSERT_UPDATE) {
-                        field.set(generic, new Date());
+                }
+                map.put("record", o);
+            }
+            else {
+                for (Field field : fields) {
+                    TableField tableField = field.getAnnotation(TableField.class);
+                    FieldFill fill = tableField.fill();
+                    if(sqlCommandType == SqlCommandType.INSERT) {
+                        if (fill == FieldFill.INSERT || fill == FieldFill.INSERT_UPDATE) {
+                            field.set(generic, new Date());
+                        }
+                    } else {
+                        if (fill == FieldFill.UPDATE || fill == FieldFill.INSERT_UPDATE) {
+                            field.set(generic, new Date());
+                        }
                     }
                 }
             }

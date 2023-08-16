@@ -14,24 +14,25 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
 
-        <fieldset class="table-search-fieldset">
-            <legend>搜索信息</legend>
-            <div style="margin: 10px 10px 10px 10px">
-                <form class="layui-form layui-form-pane" action="">
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <label class="layui-form-label">用户账号</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="username" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </fieldset>
+<!--        TODO 搜索禁用 -->
+<!--        <fieldset class="table-search-fieldset">-->
+<!--            <legend>搜索信息</legend>-->
+<!--            <div style="margin: 10px 10px 10px 10px">-->
+<!--                <form class="layui-form layui-form-pane" action="">-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <div class="layui-inline">-->
+<!--                            <label class="layui-form-label">用户账号</label>-->
+<!--                            <div class="layui-input-inline">-->
+<!--                                <input type="text" name="username" autocomplete="off" class="layui-input">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="layui-inline">-->
+<!--                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </fieldset>-->
 
         <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
@@ -57,11 +58,12 @@
 
         table.render({
             elem: '#currentTableId',
-            url: '/user/searchLike',
+            url: '/account/list',
             // url: '../../../api/table.json',
-            method: "POST",
+            method: "GET",
+            headers: {token: localStorage.token},
             response: {
-                statusCode: 10000,
+                // statusCode: 10000,
             },
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
@@ -70,23 +72,18 @@
                 icon: 'layui-icon-tips'
             }],
             cols: [[
-                {type: "checkbox", width: 50},
-                {field: 'id', width: 80, title: 'ID', sort: true},
+                // {type: "checkbox", width: 50},
+                {field: 'id', width: 200, title: 'ID', sort: true},
                 {field: 'username', width: 150, title: '账号'},
-                {field: 'password', width: 150, title: '密码'},
-                {field: 'auth', width: 80, title: '权限', templet: function (data) {
-                        return data.auth === 0 ? "管理员" : data.auth === 1 ? "医生" : "个人";
-                }, align: 'center'},
-                {field: 'deleted', width: 150, title: '失效', templet: function (data) {
-                        return data.deleted === 1 ? "是" : "否";
-                }, align: 'center'},
-                {field: 'gmtCreate', minWidth: 200, title: '创建时间', align: 'center', sort: true},
-                {field: 'gmtModified', minWidth: 200, title: '更新时间', align: 'center', sort: true},
+                {field: 'auth', width: 150, title: '权限'},
+                {field: 'description', width: 150, title: '描述'},
+                {field: 'createTime', minWidth: 200, title: '创建时间', align: 'center', sort: true},
+                {field: 'updateTime', minWidth: 200, title: '更新时间', align: 'center', sort: true},
                 {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,
-            page: true,
+            page: false,
             skin: 'line'
         });
 
@@ -123,23 +120,26 @@
             }
         });
 
+        // TODO 复选框
         function del(ids) {
-            axios.post('/user/del', ids)
-                .then(function(response){
-                    if (response.data.code === 10000) {
-                        layer.msg('删除成功', {icon: 1,time:1000, shade:0.4});
+            for (let i = 0; i < ids.length; i++) {
+                axios.delete('/account', {params: ids[i], headers: {token: localStorage.token}})
+                    .then(function(response){
+                        if (response.data.code === 10000) {
+                            layer.msg('删除成功', {icon: 1,time:1000, shade:0.4});
 
-                        // 刷新此窗口
-                        setTimeout(function () {
-                            window.location.reload()
-                        }, 1000)
-                    } else {
-                        layer.msg('删除失败', {icon: 2, time:1000, shade:0.4});
-                    }
-                })
-                .catch(function(error){
-                    console.log(error);
-                });
+                            // 刷新此窗口
+                            setTimeout(function () {
+                                window.location.reload()
+                            }, 1000)
+                        } else {
+                            layer.msg('删除失败', {icon: 2, time:1000, shade:0.4});
+                        }
+                    })
+                    .catch(function(error){
+                        console.log(error);
+                    });
+            }
         }
 
         //监听表格复选框选择
@@ -168,7 +168,24 @@
                 return false;
             } else if (obj.event === 'delete') {
                 layer.confirm('真的删除行么', function (index) {
-                    del([data.id]);
+                    // del([data.id]);
+
+                    axios.delete('/account', {params: {id: data.id}, headers: {token: localStorage.token}})
+                        .then(function(response){
+                            if (response.data.code === 10000) {
+                                layer.msg('删除成功', {icon: 1,time:1000, shade:0.4});
+
+                                // 刷新此窗口
+                                setTimeout(function () {
+                                    window.location.reload()
+                                }, 1000)
+                            } else {
+                                layer.msg('删除失败', {icon: 2, time:1000, shade:0.4});
+                            }
+                        })
+                        .catch(function(error){
+                            console.log(error);
+                        });
                 });
             }
         });

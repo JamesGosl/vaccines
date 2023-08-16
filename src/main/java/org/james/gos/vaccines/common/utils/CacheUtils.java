@@ -36,4 +36,11 @@ public class CacheUtils {
     public static Cache getCache(String name) {
         return cacheManager.getCache(name);
     }
+
+    public static void del(String name) {
+        Cache cache = getCache(name);
+        if (cache != null) {
+            cache.clear();
+        }
+    }
 }

@@ -13,3 +13,7 @@ jwt:
 
 vaccines:
   security: 4
+  id:
+    worker-id: 1
+    datacenter-id: 1
+

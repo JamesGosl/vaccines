@@ -10,10 +10,13 @@ import org.james.gos.vaccines.auth.doman.vo.response.AuthResp;
 import org.james.gos.vaccines.common.annotation.FieldFill;
 import org.james.gos.vaccines.common.annotation.TableField;
 import org.james.gos.vaccines.common.annotation.TableLogic;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import java.awt.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * AccountDTO
@@ -35,17 +38,19 @@ public class AccountDTO {
     private Date createTime;
     /** 更新时间 */
     private Date updateTime;
+    // TODO 不应该存在别的数据 否则产生强依赖
     /** 权限 */
     private Integer auth;
     /** 权限描述 */
     private String description;
-    /** 登录令牌 */
-    private String token;
 
-    public static AccountDTO build(Account account, AuthResp authResp, String token) {
+    public static AccountDTO build(Account account, @Nullable AuthResp authResp) {
         AccountDTO accountDTO = new AccountDTO();
         BeanUtil.copyProperties(account, accountDTO);
-        BeanUtil.copyProperties(authResp, accountDTO);
-        return accountDTO.setToken(token);
+        // 如果存在相同属性的话 前者会把后者覆盖掉
+//        BeanUtil.copyProperties(authResp, accountDTO);
+        if(authResp == null)
+            return accountDTO;
+        return accountDTO.setAuthId(authResp.getId()).setAuth(authResp.getAuth()).setDescription(authResp.getDescription());
     }
 }

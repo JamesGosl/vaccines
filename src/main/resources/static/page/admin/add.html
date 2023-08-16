@@ -158,9 +158,9 @@
         });
 
         form.on('submit(formStep2)', function (data) {
-            axios.post('/user/add', account)
+            axios.post('/account', account, {headers: {token: localStorage.token}})
                 .then(function(response){
-                    if (response.data.code === 10000) {
+                    if (response.data.success) {
                         $("#date").html(new Date());
                         step.next('#stepForm');
                     } else {

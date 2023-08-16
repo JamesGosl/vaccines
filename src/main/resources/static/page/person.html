@@ -46,7 +46,7 @@
                                         <label class="layui-form-label">地址:</label>
                                         <div class="layui-input-block">
                                             <div class="layui-form-mid layui-word-aux">
-                                                <span style="font-size: 18px;color: #333;" id="path"></span>
+                                                <span style="font-size: 18px;color: #333;" id="address"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -151,6 +151,7 @@
         });
 
         let flag = true;
+        let id = null;
 
         function loadPath() {
             // 加载省市区
@@ -167,24 +168,26 @@
 
         $(document).ready(function () {
             axios.defaults.withCredentials = true;
-            axios.post('/person/findThis')
+            axios.get('/user', {headers: {token: localStorage.token}})
                 .then(function(response){
                     console.log(response);
                     if (response.data.success) {
                         data = response.data.data;
-                        $("#name").html(data.name);
-                        $("#phone").html(data.phone);
-                        $("#path").html(data.path);
+                        id = data.id;
+                        if(data.name == null && data.phone == null && data.address == null) {
+                            layer.msg('暂未数据', {icon: 2, time:3000, shade:0.4});
+                            loadPath();
+                            flag = false;
+                            setTimeout(function () {
+                                step.next('#stepForm');
+                            }, 1000);
+                        } else {
+                            $("#name").html(data.name);
+                            $("#phone").html(data.phone);
+                            $("#address").html(data.address);
+                        }
                     } else {
-                        layer.msg('暂未数据', {icon: 2, time:3000, shade:0.4});
-
-                        loadPath();
-
-                        flag = false;
-
-                        setTimeout(function () {
-                            step.next('#stepForm');
-                        }, 1000);
+                        layer.msg(response.data.errMsg, {icon: 2, time:1000, shade:0.4});
                     }
                 })
                 .catch(function(error){
@@ -219,6 +222,29 @@
             form.render();
         });
 
+        function selectProvince(data) {
+            pro = data.value;
+
+            for(var i = 0, len = province.length; i < len; i++) {
+                if (province[i].name === pro) {
+                    var citys = ['<option value="">请选择市</option>'];
+                    for(var l = 0, le = province[i].city.length; l < le; l++) {
+                        var provOpt = document.createElement("option");
+                        provOpt.innerText = province[i].city[l].name;
+                        provOpt.value = province[i].city[l].name;
+                        citys.push(provOpt);
+                    }
+                    $("#city").html(citys);
+                    break;
+                }
+            }
+
+            city = "";
+            district = "";
+            $("#district").html('<option value="">请选择县/区</option>');
+            form.render();
+        }
+
 
         form.on('select(city)', function (data) {
             city = data.value;
@@ -251,15 +277,28 @@
             district = data.value;
         });
 
+        // TODO 级联为完成
         form.on('submit(formStep)', function (data) {
             let name = $("#name").html();
             let phone = $("#phone").html();
+            let address = $("#address").html();
 
             $("#new_name").val(name);
             $("#new_phone").val(phone);
 
+            let a = address.split("-");
 
             loadPath();
+
+            // $("#province").val(a[0]);
+            // $("#city").val(a[1]);
+            // $("#district").val(a[2]);
+            //
+            // selectProvince(a[0])
+            //
+            // form.render();
+            // form.render("select(city)");
+            // form.render("select(district)");
 
             step.next('#stepForm');
             return false;
@@ -287,14 +326,14 @@
                 return false;
             }
 
+            person.id = id;
             person.name = data.name;
             person.phone = data.phone;
-            person.path = data.province + "-" + data.city + "-" + data.district;
+            person.address = data.province + "-" + data.city + "-" + data.district;
 
-
-            axios.post(flag ? '/person/editThis' : '/person/addThis', person)
+            axios.post("/user", person, {headers: {token: localStorage.token}})
                 .then(function(response){
-                    if (response.data.code === 10000) {
+                    if (response.data.success) {
                         $("#date").html(new Date());
                         step.next('#stepForm');
                     } else {

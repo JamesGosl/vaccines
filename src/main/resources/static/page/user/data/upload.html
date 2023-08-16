@@ -21,11 +21,12 @@
         $(function () {
             // 初始化插件
             $("#zyupload").zyUpload({
+                headers: {token: localStorage.token},
                 width: "650px",                 // 宽度
                 height: "400px",                 // 宽度
                 itemWidth: "140px",                 // 文件项的宽度
                 itemHeight: "115px",                 // 文件项的高度
-                url: "/vaccines/upload/" + data.id,  // 上传文件的路径
+                url: "/vaccines/upload?id=" + data.id + "&token=" + localStorage.token,  // 上传文件的路径
                 fileType: ["xml"],// 上传文件的类型
                 fileSize: 51200000,                // 上传文件的大小
                 multiple: false,                    // 是否可以多个文件上传
@@ -34,7 +35,7 @@
                 del: true,                    // 是否可以删除文件
                 finishDel: true,  				  // 是否在上传文件完成后删除预览
                 response: {
-                    statusCode: 10000,
+                    // statusCode: 10000,
                 },
                 /* 外部获得的回调接口 */
                 onSelect: function (selectFiles, allFiles) {    // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
@@ -67,7 +68,6 @@
                     console.info(response);
                 }
             });
-
         });
     }
 </script>

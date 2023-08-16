@@ -17,4 +17,19 @@ public class CacheKey {
      * 账户信息
      */
     public static final String ACCOUNT = "account";
+
+    /**
+     * 用户信息
+     */
+    public static final String USER = "user";
+
+    /**
+     * 用户信息
+     */
+    public static final String VACCINES = "vaccines";
+
+    /**
+     * 系统信息
+     */
+    public static final String SYSTEM = "system";
 }

@@ -2,6 +2,7 @@ package org.james.gos.vaccines.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.james.gos.vaccines.VaccinesApplication;
+import org.james.gos.vaccines.auth.service.IAuthService;
 import org.james.gos.vaccines.auth.service.impl.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class AuthServiceTests {
 
     @Autowired
-    AuthService authService;
+    IAuthService authService;
 
     @Test
     public void getAuthAll() {

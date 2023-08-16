@@ -45,6 +45,22 @@ public class AuthMapperTests {
     }
 
     @Test
+    public void updateByExampleSelective() {
+        Example example = new Example(Auth.class);
+        example.createCriteria().andEqualTo("id", "1");
+        Auth auth = new Auth();
+        auth.setDescription("123456");
+        authMapper.updateByExampleSelective(auth, example);
+    }
+
+    @Test
+    public void deleteByExample() {
+        Example example = new Example(Auth.class);
+        example.createCriteria().andEqualTo("auth", "0");
+        authMapper.deleteByExample(example);
+    }
+
+    @Test
     public void updateByPrimaryKeySelective() {
         Auth auth = new Auth().setId(1L).setAuth(AuthEnum.ADMIN.getAuth()).setDescription(AuthEnum.ADMIN.getDesc());
         assert 1 == authMapper.updateByPrimaryKeySelective(auth);

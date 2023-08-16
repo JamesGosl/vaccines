@@ -49,17 +49,17 @@
             miniTab = layui.miniTab;
 
         $(document).ready(function () {
-            axios.get('/user/isLogin')
+            axios.get('/account', {headers: {token: localStorage.token}})
                 .then(function (response) {
-                    if (response.data.code === 10001) {
+                    if (response.data.success) {
+                        $("#username").attr("value", response.data.data.username);
+                        $("#gmtCreate").attr("value", response.data.data.createTime);
+                        $("#gmtModified").attr("value", response.data.data.updateTime);
+                    } else {
                         layer.msg('暂未登录', {icon: 5, time:1000, shade:0.4});
                         setTimeout(function () {
                             location.href = "page/login.html";
                         }, 1000)
-                    } else {
-                        $("#username").attr("value", response.data.data.username);
-                        $("#gmtCreate").attr("value", response.data.data.gmtCreate);
-                        $("#gmtModified").attr("value", response.data.data.gmtModified);
                     }
                 })
                 .catch(function (error) {

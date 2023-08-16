@@ -66,7 +66,7 @@
                 miniTab = layui.miniTab;
 
             $(document).ready(function () {
-                axios.get(`/vaccines/show/${data.id}`)
+                axios.get(`/vaccines?id=${data.id}`, {headers: {token: localStorage.token}})
                     .then(function (response) {
                         if (response.data.code !== 10001) {
                             $("#name").attr("value", response.data.data.name);

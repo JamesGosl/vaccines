@@ -3,6 +3,7 @@ package org.james.gos.vaccines.common.plugins;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -138,6 +139,41 @@ public class LogicSqlInjector extends BaseSqlInjector {
         if(sqlCommandType == SqlCommandType.DELETE) {
             Object generic = getValue("boundSql.parameterObject", metaObject);
 
+            // 处理Example 类型
+            // selectByExample(example)
+            if (generic instanceof Example) {
+                Example example = (Example) generic;
+
+                Constructor<?> constructor = mapperToGenericConstructor.get(genericClass);
+                try {
+                    Object o = constructor.newInstance();
+
+                    List<Field> fields = getGenericToLogicField(genericClass);
+                    for (Field field : fields) {
+                        field.set(o, deletedValue);
+                    }
+                    MapperMethod.ParamMap<Object> paramMap = new MapperMethod.ParamMap<>();
+                    paramMap.put("record", o);
+                    paramMap.put("example", example);
+
+
+                    // 查找update MappedStatement
+                    String flag =  getMapperToInterface(mappedStatement.getId()).getName() + ".updateByExampleSelective";
+                    // 获取这个接口的全部MappedStatement
+                    List<MappedStatement> mappedStatements = getMappedStatement(mappedStatement.getResource(), this.mappedStatements);
+                    for (MappedStatement statement : mappedStatements) {
+                        if (flag.equals(statement.getId())) {
+                            // 修改掉mappedStatement 否则后续的插件还会以原来的mappedStatement 进行操作
+                            setValue("delegate.mappedStatement", metaObject, statement);
+                            setValue("delegate.parameterHandler.parameterObject", metaObject, paramMap);
+                            return statement.getBoundSql(paramMap);
+                        }
+                    }
+                } catch (InstantiationException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+
             // 处理接口泛型类型
             // delete(auth)
             if(generic != null && !ClassUtils.isPrimitiveOrWrapper(generic.getClass())) {
@@ -152,6 +188,8 @@ public class LogicSqlInjector extends BaseSqlInjector {
                 List<MappedStatement> mappedStatements = getMappedStatement(mappedStatement.getResource(), this.mappedStatements);
                 for (MappedStatement statement : mappedStatements) {
                     if (flag.equals(statement.getId())) {
+                        // 修改掉mappedStatement 否则后续的插件还会以原来的mappedStatement 进行操作
+                        setValue("delegate.mappedStatement", metaObject, statement);
                         return statement.getBoundSql(generic);
                     }
                 }
@@ -178,6 +216,8 @@ public class LogicSqlInjector extends BaseSqlInjector {
                     List<MappedStatement> mappedStatements = getMappedStatement(mappedStatement.getResource(), this.mappedStatements);
                     for (MappedStatement statement : mappedStatements) {
                         if (flag.equals(statement.getId())) {
+                            // 修改掉mappedStatement 否则后续的插件还会以原来的mappedStatement 进行操作
+                            setValue("delegate.mappedStatement", metaObject, statement);
                             return statement.getBoundSql(obj);
                         }
                     }

@@ -1,5 +1,6 @@
 package org.james.gos.vaccines.common.utils;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
@@ -63,7 +64,7 @@ public class JwtUtils {
             DecodedJWT jwt = verifier.verify(token);
             return jwt.getClaims();
         } catch (Exception e) {
-            log.error("decode error,token:{}", token, e);
+//            log.error("decode error,token:{}", token, e);
         }
         return null;
     }

@@ -60,8 +60,8 @@ public class MyBatisConfiguration {
 //		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 //		sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:sql/mapper/*.xml"));
 
-        // 添加插件
-        sqlSessionFactoryBean.setPlugins(logicSqlInjector(), fieldSqlInjector());
+        // 添加插件 越往后优先级越高
+        sqlSessionFactoryBean.setPlugins(fieldSqlInjector(), logicSqlInjector());
 //        sqlSessionFactoryBean.setPlugins(logicSqlInjector(), fieldSqlInjector(), showSqlPlugin());
         return sqlSessionFactoryBean;
     }

@@ -48,22 +48,22 @@
             </select>
         </div>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">失效</label>
-        <div class="layui-input-block">
-            <input type="checkbox" name="deleted" lay-skin="switch" lay-text="ON|OFF" id="deleted">
-        </div>
-    </div>
+<!--    <div class="layui-form-item">-->
+<!--        <label class="layui-form-label">失效</label>-->
+<!--        <div class="layui-input-block">-->
+<!--            <input type="checkbox" name="deleted" lay-skin="switch" lay-text="ON|OFF" id="deleted">-->
+<!--        </div>-->
+<!--    </div>-->
     <div class="layui-form-item">
         <label class="layui-form-label">创建时间</label>
         <div class="layui-input-block">
-            <input type="text" name="gmtCreate" value="" class="layui-input" id="gmtCreate" disabled>
+            <input type="text" name="createTime" value="" class="layui-input" id="createTime" disabled>
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">更新时间</label>
         <div class="layui-input-block">
-            <input type="text" name="gmtModified" value="" class="layui-input" id="gmtModified" disabled>
+            <input type="text" name="updateTime" value="" class="layui-input" id="updateTime" disabled>
         </div>
     </div>
 
@@ -85,33 +85,32 @@
 
             $("#id").val(data.id);
             $("#username").val(data.username);
-            $("#password").val(data.password);
+            $("#password").val();
             $("#auth").val(data.auth);
-            if (data.deleted === 0) {
-                $("#deleted").removeAttr("checked");
-                // body.find("#deleted").next().removeClass('layui-form-onswitch'); //关
-            } else {
-                $("#deleted").attr("checked", "checked");
-                // body.find("#deleted").next().addClass('layui-form-onswitch'); //开
-            }
-            $("#gmtCreate").val(data.gmtCreate);
-            $("#gmtModified").val(data.gmtModified);
+            // if (data.deleted === 0) {
+            //     $("#deleted").removeAttr("checked");
+            //     // body.find("#deleted").next().removeClass('layui-form-onswitch'); //关
+            // } else {
+            //     $("#deleted").attr("checked", "checked");
+            //     // body.find("#deleted").next().addClass('layui-form-onswitch'); //开
+            // }
+            $("#createTime").val(data.createTime);
+            $("#updateTime").val(data.updateTime);
             form.render();
 
 
             //监听提交
             form.on('submit(saveBtn)', function (data) {
                 data = data.field;
-                if (data.deleted === null || data.deleted === undefined) {
-                    data.deleted = 0;
-                } else {
-                    data.deleted = 1;
-                }
-                data.type = 2;
 
-                axios.post('/user/edit', data)
+                axios.post('/account', {
+                    id: data.id,
+                    auth: data.auth,
+                    username: data.username,
+                    password: data.password,
+                }, {headers: {token: localStorage.token}})
                 .then(function(response){
-                    if (response.data.code === 10000) {
+                    if (response.data.success) {
                         layer.msg('修改成功', {icon: 1,time:1000, shade:0.4});
 
                         // 关闭此窗口

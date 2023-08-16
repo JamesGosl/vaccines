@@ -84,22 +84,21 @@
                 return false;
             }
 
-            axios.post('/user/login', {
+            axios.post('/account/login', {
                 username: data.username,
                 password: data.password
             })
             .then(function(response){
-                console.log(response);
+                if (response.data.success) {
+                    localStorage.token = response.data.data.token;
+                    layer.msg('登录成功', {icon: 6, time:1000, shade:0.4});
 
-                // if (response.data.code === 10000) {
-                //     layer.msg('登录成功', {icon: 6, time:1000, shade:0.4});
-                //
-                //     setTimeout(function () {
-                //         window.location = '../index.html';
-                //     }, 1000)
-                // } else {
-                //     layer.msg('登陆失败', {icon: 5, time:1000, shade:0.4});
-                // }
+                    setTimeout(function () {
+                        window.location = '../index.html';
+                    }, 1000)
+                } else {
+                    layer.msg(response.data.errMsg, {icon: 5, time:1000, shade:0.4});
+                }
             })
             .catch(function(error){
                 console.log(error);

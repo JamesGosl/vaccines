@@ -137,24 +137,22 @@
             miniTongji = layui.miniTongji;
 
         $(document).ready(function () {
-            axios.get('/user/isLogin')
+            axios.get('/account', {headers: {token: localStorage.token}})
                 .then(function (response) {
-                    if (response.data.code === 10001) {
-                        layer.msg('暂未登录', {icon: 5, time:1000, shade:0.4});
+                    if(!response.data.success) {
+                        layer.msg(response.data.errMsg, {icon: 5, time:1000, shade:0.4});
                         setTimeout(function () {
-                            location.href = "page/login.html";
+                            window.location = "page/login.html";
                         }, 1000)
-                    } else {
-                        $(".username").html(response.data.data.username);
                     }
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    location.href = "page/login.html";
                 });
         });
 
         var options = {
-            iniUrl: "/user/info",    // 初始化接口
+            iniUrl: "/info?token=" + localStorage.token,    // 初始化接口
             clearUrl: "api/clear.json", // 缓存清理接口
             urlHashLocation: true,      // 是否打开hash定位
             bgColorDefault: false,      // 主题默认配置
@@ -163,6 +161,7 @@
             loadingTime: 0,             // 初始化加载时间
             pageAnim: true,             // iframe窗口动画
             maxTabNum: 20,              // 最大的tab打开数量
+            type: 'post',
         };
         miniAdmin.render(options);
 
@@ -177,10 +176,12 @@
         });
 
         $('.login-out').on("click", function () {
-            axios.get('/user/logout')
+            axios.get('/account/logout', {headers: {token: localStorage.token}})
                 .then(function (response) {
-                    if (response.data.code === 10000) {
+                    if (response.data.success) {
                         layer.msg('退出登录成功', {icon: 6, time:1000, shade:0.4});
+
+                        localStorage.token = null;
 
                         setTimeout(function () {
                             window.location = 'page/login.html';
@@ -190,7 +191,6 @@
                 .catch(function (error) {
                     console.log(error);
                 });
-
         });
     });
 </script>

@@ -8,6 +8,8 @@ import lombok.experimental.Accessors;
 import org.james.gos.vaccines.common.annotation.FieldFill;
 import org.james.gos.vaccines.common.annotation.TableField;
 import org.james.gos.vaccines.common.annotation.TableLogic;
+import org.james.gos.vaccines.common.plugins.IdWorker;
+import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -32,6 +34,7 @@ public class Vaccines implements Serializable {
 
     /** id */
     @Id
+    @KeySql(genId = IdWorker.class)
     private Long id;
 
     /** 账户id */
