@@ -5,11 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.james.gos.vaccines.account.doman.dto.AccountPageDTO;
 import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
-import org.james.gos.vaccines.account.doman.vo.request.LoginReq;
+import org.james.gos.vaccines.system.domain.vo.request.LoginReq;
 import org.james.gos.vaccines.account.doman.vo.request.UsernameReq;
 import org.james.gos.vaccines.account.doman.vo.response.AUResp;
-import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
-import org.james.gos.vaccines.account.doman.vo.response.AccountPageResp;
 import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
 import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.account.service.adapter.AccountAdapter;
@@ -21,7 +19,6 @@ import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
 import org.james.gos.vaccines.common.utils.RequestHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tk.mybatis.mapper.genid.GenId;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -40,18 +37,6 @@ public class AccountController {
     @Autowired
     private IAccountService accountService;
 
-    @PostMapping("/login")
-    @ApiOperation("登录账号")
-    public ApiResult<AccountResp> login(@Valid @RequestBody LoginReq loginReq) {
-        return ApiResult.success(accountService.login(loginReq));
-    }
-
-    @GetMapping("/logout")
-    public ApiResult<Void> logout() {
-        accountService.logout(RequestHolder.get().getId());
-        return ApiResult.success();
-    }
-
     @GetMapping
     @ApiOperation("获取当前账号信息")
     public ApiResult<AccountResp> getAccount() {
@@ -62,15 +47,6 @@ public class AccountController {
     @ApiOperation("获取所有账号信息")
     public ApiResult<List<AccountResp>> getAccountAll() {
         return ApiResult.success(AccountAdapter.buildAccountResp(accountService.getAccountAll(RequestHolder.get().getId())));
-    }
-
-    @GetMapping("/page")
-    @ApiModelProperty("分页获取所有账户信息")
-    @Deprecated
-    public ApiPageResult<List<AccountResp>> getAccountPage(@Valid PageBaseReq pageBaseReq) {
-        AccountPageDTO accountPageDTO = accountService.getAccountAll(RequestHolder.get().getId(), pageBaseReq);
-        return ApiPageResult.success(
-                accountPageDTO.getTotal(), AccountAdapter.buildAccountResp(accountPageDTO.getAccountDTOList()));
     }
 
     @PostMapping
@@ -94,12 +70,6 @@ public class AccountController {
             accountService.deleted(RequestHolder.get().getId(), id);
         }
         return ApiResult.success();
-    }
-
-    @GetMapping("/auv")
-    @ApiOperation("获取账户疫苗情况列表")
-    public ApiResult<List<AUVResp>> auv() {
-        return ApiResult.success(accountService.auv(RequestHolder.get().getId()));
     }
 
     @GetMapping("/au")

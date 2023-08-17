@@ -189,7 +189,7 @@
         });
 
         $('.login-out').on("click", function () {
-            axios.get('/account/logout', {headers: {token: localStorage.token}})
+            axios.get('/system/logout', {headers: {token: localStorage.token}})
                 .then(function (response) {
                     if (response.data.success) {
                         layer.msg('退出登录成功', {icon: 6, time:1000, shade:0.4});

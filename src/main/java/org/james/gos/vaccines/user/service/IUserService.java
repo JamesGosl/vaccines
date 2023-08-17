@@ -1,7 +1,5 @@
 package org.james.gos.vaccines.user.service;
 
-import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
-import org.james.gos.vaccines.user.doman.dto.UserDTO;
 import org.james.gos.vaccines.user.doman.vo.request.UserReq;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 

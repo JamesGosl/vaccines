@@ -2,7 +2,6 @@ package org.james.gos.vaccines.vaccines.service;
 
 import org.james.gos.vaccines.common.doman.vo.request.IdReq;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
-import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
 import org.james.gos.vaccines.vaccines.doman.vo.response.VAUResp;
 
 import javax.servlet.http.HttpServletResponse;
@@ -39,14 +38,6 @@ public interface IVaccinesService {
      * @return 疫苗信息
      */
     VaccinesDTO getVaccinesByAid(Long aid);
-
-
-    /**
-     * 根据账户Id 查询所有疫苗信息
-     *
-     * @param aid 账户id
-     */
-    AUVResp getVaccinesAll(Long aid);
 
     /**
      * 上传疫苗信息

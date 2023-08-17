@@ -5,14 +5,15 @@ import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
 import org.james.gos.vaccines.common.doman.vo.request.IdReq;
+import org.james.gos.vaccines.common.exception.AccountErrorEnum;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
+import org.james.gos.vaccines.common.exception.CommonErrorEnum;
 import org.james.gos.vaccines.common.exception.InsertRuntimeException;
 import org.james.gos.vaccines.friend.doman.dto.FriendDTO;
 import org.james.gos.vaccines.friend.service.IFriendService;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 import org.james.gos.vaccines.user.service.IUserService;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
-import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
 import org.james.gos.vaccines.vaccines.doman.vo.response.VAUResp;
 import org.james.gos.vaccines.vaccines.mapper.VaccinesMapper;
 import org.james.gos.vaccines.vaccines.service.IVaccinesService;
@@ -54,7 +55,7 @@ public class VaccinesService implements IVaccinesService {
     @Override
     public void insertVaccines(Long aid) {
         if (vaccinesMapper.insertSelective(VaccinesAdapter.build(aid)) == YesOrNoEnum.NO.getStatus()) {
-            throw new InsertRuntimeException("插入疫苗信息失败-" + aid);
+            throw new InsertRuntimeException(CommonErrorEnum.SYSTEM_ERROR);
         }
     }
 
@@ -69,11 +70,6 @@ public class VaccinesService implements IVaccinesService {
     }
 
     @Override
-    public AUVResp getVaccinesAll(Long aid) {
-        return null;
-    }
-
-    @Override
     public void upload(Long aid, IdReq idReq, String vaccines) {
         // 校验账户
         VaccinesDTO vaccinesDTO = getVaccines(idReq.getId());
@@ -81,7 +77,7 @@ public class VaccinesService implements IVaccinesService {
                 AuthEnum.of(accountService.getAccount(aid).getAuth()).equals(AuthEnum.ADMIN)) {
             vaccinesCache.upload(VaccinesAdapter.build(idReq.getId(), vaccines));
         } else {
-            throw new AccountRuntimeException("权限不足");
+            throw new AccountRuntimeException(AccountErrorEnum.NOT_AUTH);
         }
     }
 
@@ -102,7 +98,7 @@ public class VaccinesService implements IVaccinesService {
             } catch (IOException e) {
             }
         } else {
-            throw new AccountRuntimeException("权限不足");
+            throw new AccountRuntimeException(AccountErrorEnum.NOT_AUTH);
         }
     }
 

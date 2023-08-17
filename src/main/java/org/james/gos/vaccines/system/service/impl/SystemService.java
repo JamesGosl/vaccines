@@ -2,18 +2,18 @@ package org.james.gos.vaccines.system.service.impl;
 
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
 import org.james.gos.vaccines.account.service.IAccountService;
-import org.james.gos.vaccines.auth.service.IAuthService;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
 import org.james.gos.vaccines.common.event.ClearCacheApplicationEvent;
-import org.james.gos.vaccines.friend.service.IFriendService;
+import org.james.gos.vaccines.common.utils.JwtUtils;
+import org.james.gos.vaccines.system.domain.vo.response.LoginResp;
 import org.james.gos.vaccines.system.service.ISystemService;
+import org.james.gos.vaccines.system.service.SystemAdapter;
 import org.james.gos.vaccines.system.service.cache.SystemCache;
-import org.james.gos.vaccines.user.service.IUserService;
-import org.james.gos.vaccines.vaccines.service.IVaccinesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 /**
  * SystemService
@@ -25,17 +25,48 @@ import org.springframework.stereotype.Service;
 public class SystemService implements ISystemService {
 
     @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
     private IAccountService accountService;
     @Autowired
     private SystemCache systemCache;
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+    private JwtUtils jwtUtils;
+
+    @Override
+    public LoginResp login(String username, String password) {
+        AccountDTO account = accountService.login(username, password);
+        Long aid = account.getId();
+        String token = jwtUtils.createToken(aid);
+        systemCache.setToken(aid, token);
+        return SystemAdapter.buildLoginResp(account, token);
+    }
+
+    @Override
+    public void logout(Long aid) {
+        systemCache.clearToken(aid);
+    }
 
     @Override
     public String info(Long aid) {
         AccountDTO account = accountService.getAccount(aid);
         AuthEnum auth = AuthEnum.of(account.getAuth());
         return systemCache.info(auth);
+    }
+
+    @Override
+    public boolean verify(String token) {
+        Long aid = jwtUtils.getAidOrNull(token);
+        if (Objects.isNull(aid)) {
+            return false;
+        }
+        // 有可能token失效了，需要校验是不是和最新token一致
+        return Objects.equals(token, systemCache.getToken(aid));
+    }
+
+    @Override
+    public Long getAid(String token) {
+        return verify(token) ? jwtUtils.getAidOrNull(token) : null;
     }
 
     @Override

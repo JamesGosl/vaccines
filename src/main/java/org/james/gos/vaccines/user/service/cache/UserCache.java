@@ -27,7 +27,6 @@ public class UserCache implements ApplicationListener<ClearCacheApplicationEvent
     @Autowired
     private UserMapper userMapper;
 
-
     /**
      * 获取用户信息
      *

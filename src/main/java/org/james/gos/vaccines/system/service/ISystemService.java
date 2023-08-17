@@ -1,5 +1,7 @@
 package org.james.gos.vaccines.system.service;
 
+import org.james.gos.vaccines.system.domain.vo.response.LoginResp;
+
 /**
  * 系统 逻辑层
  *
@@ -22,4 +24,34 @@ public interface ISystemService {
      * @param aid 账户Id
      */
     void clear(Long aid);
+
+    /**
+     * 登录
+     *
+     * @param username 账户
+     * @param password 密码
+     */
+    LoginResp login(String username, String password);
+
+    /**
+     * 退出
+     *
+     * @param aid 账户id
+     */
+    void logout(Long aid);
+
+
+    /**
+     * 效验Token 是否有效
+     *
+     * @param token Token
+     */
+    boolean verify(String token);
+
+    /**
+     * 获取用户Id
+     *
+     * @return 用户Id
+     */
+    Long getAid(String token);
 }

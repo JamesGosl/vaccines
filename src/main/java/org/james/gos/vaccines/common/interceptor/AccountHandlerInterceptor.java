@@ -7,6 +7,7 @@ import org.james.gos.vaccines.common.doman.vo.request.RequestInfo;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
 import org.james.gos.vaccines.common.utils.JwtUtils;
 import org.james.gos.vaccines.common.utils.RequestHolder;
+import org.james.gos.vaccines.system.service.ISystemService;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,12 +22,10 @@ import java.util.Objects;
  * @since 2023/08/16 15:15
  */
 public class AccountHandlerInterceptor implements HandlerInterceptor {
-    private static JwtUtils jwtUtils;
-    private static IAccountService accountService;
+    private static ISystemService systemService;
 
     static {
-        AccountHandlerInterceptor.jwtUtils = SpringUtil.getBean(JwtUtils.class);
-        AccountHandlerInterceptor.accountService = SpringUtil.getBean(IAccountService.class);
+        AccountHandlerInterceptor.systemService = SpringUtil.getBean(ISystemService.class);
     }
 
     // 前置
@@ -34,7 +33,7 @@ public class AccountHandlerInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         try {
             String token = request.getHeader(RequestKey.TOKEN);
-            Long aid = accountService.getAid(token);
+            Long aid = systemService.getAid(token);
             if(Objects.nonNull(aid)) {
                 RequestHolder.set(new RequestInfo().setId(aid));
                 return true;

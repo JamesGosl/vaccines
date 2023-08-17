@@ -47,7 +47,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     }
 
     private static final String[] INCLUDE = {"/auth/**", "/account/**", "/user/**", "/vaccines/**", "/friend/**", "/system/**"};
-    private static final String[] EXCLUDE = {"/account/login", "/system/info", "/vaccines/upload", "/vaccines/download"};
+    private static final String[] EXCLUDE = {"/system/login", "/system/info", "/vaccines/upload", "/vaccines/download"};
 
     // 拦截器设置
     @Override

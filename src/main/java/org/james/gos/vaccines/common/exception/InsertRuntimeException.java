@@ -15,4 +15,8 @@ public class InsertRuntimeException extends RuntimeException {
     public InsertRuntimeException(String message) {
         super(message);
     }
+
+    public InsertRuntimeException(ErrorEnum errorEnum) {
+        super(errorEnum.getErrorMsg());
+    }
 }

@@ -16,4 +16,8 @@ public class AccountRuntimeException extends RuntimeException {
     public AccountRuntimeException(String message) {
         super(message);
     }
+
+    public AccountRuntimeException(ErrorEnum errorEnum) {
+        super(errorEnum.getErrorMsg());
+    }
 }

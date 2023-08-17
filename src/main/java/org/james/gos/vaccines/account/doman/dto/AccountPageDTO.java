@@ -1,14 +1,10 @@
 package org.james.gos.vaccines.account.doman.dto;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.github.pagehelper.Page;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.james.gos.vaccines.account.doman.entity.Account;
-import org.james.gos.vaccines.auth.doman.vo.response.AuthResp;
-import org.springframework.lang.Nullable;
 
-import java.util.Date;
 import java.util.List;
 
 /**

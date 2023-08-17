@@ -164,7 +164,7 @@
                         $("#date").html(new Date());
                         step.next('#stepForm');
                     } else {
-                        layer.msg('创建失败', {icon: 2, time:1000, shade:0.4});
+                        layer.msg(response.data.errMsg, {icon: 2, time:1000, shade:0.4});
                     }
                 })
                 .catch(function(error){

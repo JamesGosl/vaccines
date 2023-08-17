@@ -1,11 +1,10 @@
 package org.james.gos.vaccines.common.exception;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 /**
- * TODO
+ * AccountErrorEnum
  *
  * @author James Gosl
  * @since 2023/08/16 17:25
@@ -15,6 +14,9 @@ import lombok.Getter;
 public enum AccountErrorEnum implements ErrorEnum {
     NOT_LOGIN(100, "未登录"),
     NOT_AUTH(101, "无权限"),
+    EXISTS(102, "账户已经存在"),
+    LOGIN(103, "账户或密码不对"),
+    NOT_OPTIONS_THIS(104, "不能操作自己");
     ;
 
     private final Integer code;

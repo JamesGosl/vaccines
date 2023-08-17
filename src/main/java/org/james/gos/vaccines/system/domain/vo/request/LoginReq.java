@@ -1,4 +1,4 @@
-package org.james.gos.vaccines.account.doman.vo.request;
+package org.james.gos.vaccines.system.domain.vo.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

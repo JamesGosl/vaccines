@@ -2,13 +2,16 @@ package org.james.gos.vaccines.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.james.gos.vaccines.VaccinesApplication;
+import org.james.gos.vaccines.account.doman.dto.AccountDTO;
 import org.james.gos.vaccines.account.doman.entity.Account;
 import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
-import org.james.gos.vaccines.account.doman.vo.request.LoginReq;
+import org.james.gos.vaccines.system.domain.vo.request.LoginReq;
 import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
 import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.common.constant.RedisKey;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
+import org.james.gos.vaccines.system.domain.vo.response.LoginResp;
+import org.james.gos.vaccines.system.service.ISystemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,19 +29,8 @@ public class AccountTests {
     @Autowired
     private IAccountService accountService;
 
-    @Test
-    public void selectByUsername() {
-        Account account = accountService.selectByUsername("admin");
-        assert account != null;
-    }
-
-    @Test
-    public void login() {
-        LoginReq loginReq = new LoginReq();
-        loginReq.setUsername("admin");
-        loginReq.setPassword("admin");
-        log.debug(accountService.login(loginReq).toString());
-    }
+    @Autowired
+    private ISystemService systemService;
 
     @Test
     public void redisKey() {
@@ -50,10 +42,7 @@ public class AccountTests {
 
     @Test
     public void insertAndUpdateAdmin() {
-        LoginReq loginReq = new LoginReq();
-        loginReq.setUsername("admin");
-        loginReq.setPassword("admin");
-        AccountResp login = accountService.login(loginReq);
+        LoginResp login = systemService.login("admin", "admin");
 
         // 增加用户
         try {
@@ -93,10 +82,7 @@ public class AccountTests {
 
     @Test
     public void insertAndUpdateUser() {
-        LoginReq loginReq = new LoginReq();
-        loginReq.setUsername("root");
-        loginReq.setPassword("root");
-        AccountResp login = accountService.login(loginReq);
+        LoginResp login = systemService.login("admin", "admin");
 
         // 增加用户
         try {
@@ -135,10 +121,7 @@ public class AccountTests {
 
     @Test
     public void deletedAdmin() {
-        LoginReq loginReq = new LoginReq();
-        loginReq.setUsername("admin");
-        loginReq.setPassword("admin");
-        AccountResp login = accountService.login(loginReq);
+        LoginResp login = systemService.login("admin", "admin");
 
         try {
             accountService.deleted(login.getId(), 1691771048724402177L);
@@ -150,10 +133,7 @@ public class AccountTests {
 
     @Test
     public void deletedUser() {
-        LoginReq loginReq = new LoginReq();
-        loginReq.setUsername("root");
-        loginReq.setPassword("root");
-        AccountResp login = accountService.login(loginReq);
+        LoginResp login = systemService.login("admin", "admin");
 
         try {
             accountService.deleted(login.getId(), 72893L);
@@ -164,10 +144,7 @@ public class AccountTests {
 
     @Test
     public void getAccountAllAdmin() {
-        LoginReq loginReq = new LoginReq();
-        loginReq.setUsername("admin");
-        loginReq.setPassword("admin");
-        AccountResp login = accountService.login(loginReq);
+        LoginResp login = systemService.login("admin", "admin");
 
         try {
             for (int i = 0; i < 10; i++) {
@@ -180,15 +157,53 @@ public class AccountTests {
 
     @Test
     public void getAccountAllUser() {
-        LoginReq loginReq = new LoginReq();
-        loginReq.setUsername("root");
-        loginReq.setPassword("root");
-        AccountResp login = accountService.login(loginReq);
+        LoginResp login = systemService.login("admin", "admin");
 
         try {
             accountService.getAccountAll(login.getId());
         } catch (Exception e) {
             log.error(e.getMessage());
+        }
+    }
+
+    @Test
+    public void insertMore() {
+        LoginResp login = systemService.login("admin", "admin");
+
+        for (int i = 0; i < 1000; i++) {
+            try {
+                AccountReq accountReq = new AccountReq();
+                accountReq.setAuth(AuthEnum.ADMIN.getAuth());
+                accountReq.setUsername("test-admin-" + i);
+                accountReq.setPassword("test-admin-" + i);
+                accountService.insertAndUpdate(login.getId(), accountReq);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        for (int i = 0; i < 1000; i++) {
+            try {
+                AccountReq accountReq = new AccountReq();
+                accountReq.setAuth(AuthEnum.DOCTOR.getAuth());
+                accountReq.setUsername("test-doctor-" + i);
+                accountReq.setPassword("test-doctor-" + i);
+                accountService.insertAndUpdate(login.getId(), accountReq);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        for (int i = 0; i < 1000; i++) {
+            try {
+                AccountReq accountReq = new AccountReq();
+                accountReq.setAuth(AuthEnum.USER.getAuth());
+                accountReq.setUsername("test-user-" + i);
+                accountReq.setPassword("test-user-" + i);
+                accountService.insertAndUpdate(login.getId(), accountReq);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
         }
     }
 }

@@ -7,7 +7,6 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
-import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;

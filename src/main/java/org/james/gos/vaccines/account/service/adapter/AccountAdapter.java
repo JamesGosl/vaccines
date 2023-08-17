@@ -3,20 +3,17 @@ package org.james.gos.vaccines.account.service.adapter;
 import cn.hutool.core.bean.BeanUtil;
 import lombok.Data;
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
-import org.james.gos.vaccines.account.doman.dto.AccountPageDTO;
 import org.james.gos.vaccines.account.doman.entity.Account;
 import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
 import org.james.gos.vaccines.account.doman.vo.response.AUResp;
-import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
-import org.james.gos.vaccines.account.doman.vo.response.AccountPageResp;
 import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
-import org.james.gos.vaccines.auth.doman.vo.response.AuthResp;
-import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
+import org.james.gos.vaccines.common.doman.enums.AuthEnum;
+import org.james.gos.vaccines.common.exception.AccountRuntimeException;
 import org.james.gos.vaccines.common.plugins.DateUtils;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
-import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -27,19 +24,6 @@ import java.util.stream.Collectors;
  */
 @Data
 public class AccountAdapter {
-
-    public static AccountResp buildAccountResp(Account account, AuthResp auth, String token) {
-        AccountResp accountResp = new AccountResp();
-        BeanUtil.copyProperties(account, accountResp);
-        BeanUtil.copyProperties(auth, accountResp);
-        return accountResp.setToken(token);
-    }
-
-    public static AccountPageResp buildAccountPageResp(AccountPageDTO accountPageDTO) {
-
-
-        return null;
-    }
 
     public static AccountResp buildAccountResp(AccountDTO accountDTO) {
         AccountResp accountResp = new AccountResp();
@@ -52,47 +36,14 @@ public class AccountAdapter {
         return accountDTO.stream().map(AccountAdapter::buildAccountResp).collect(Collectors.toList());
     }
 
-    public static AccountResp buildAccountResp(AccountDTO accountDTO, String token) {
-        AccountResp accountResp = new AccountResp();
-        BeanUtil.copyProperties(accountDTO, accountResp);
-        return accountResp.setToken(token);
-    }
-
     public static Account buildAccount(AccountReq accountReq) {
+        if (Objects.isNull(AuthEnum.of(accountReq.getAuth()))) {
+            throw new AccountRuntimeException("权限不正常");
+        }
+
         Account account = new Account();
         BeanUtil.copyProperties(accountReq, account);
         return account;
-    }
-
-    public static Account buildAccount(AccountReq accountReq, String password) {
-        Account account = new Account();
-        BeanUtil.copyProperties(accountReq, account);
-        return account.setPassword(password);
-    }
-
-    public static AUVResp buildAUV(AccountDTO accountDTO, UserResp user, VaccinesDTO vaccines) {
-        AUVResp auvResp = new AUVResp();
-        if(vaccines != null) {
-            auvResp.setId(vaccines.getId());
-            if (vaccines.getContent() != null) {
-                auvResp.setState(YesOrNoEnum.YES.getStatus());
-            } else {
-                auvResp.setState(YesOrNoEnum.NO.getStatus());
-            }
-        }
-        auvResp.setUsername(accountDTO.getUsername());
-        auvResp.setName(user.getName());
-        return auvResp;
-    }
-
-    public static AUResp buildAU(AccountDTO account, UserResp user) {
-        AUResp auResp = new AUResp();
-        auResp.setId(account.getId());
-        auResp.setUsername(account.getUsername());
-        auResp.setName(user.getName());
-        auResp.setPhone(user.getPhone());
-        auResp.setAddress(user.getAddress());
-        return auResp;
     }
 
     public static AUResp buildAU(Account account, UserResp user) {
@@ -103,9 +54,5 @@ public class AccountAdapter {
         auResp.setPhone(user.getPhone());
         auResp.setAddress(user.getAddress());
         return auResp;
-    }
-
-    public static AUResp buildAUEmpty() {
-        return new AUResp();
     }
 }
