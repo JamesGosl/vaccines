@@ -25,11 +25,12 @@
 
         table.render({
             elem: '#currentTableId',
-            url: '/user/findAuth',
+            url: '/friend/list',
             // url: '../../../api/table.json',
-            method: "POST",
+            headers: {token: localStorage.token},
+            method: "GET",
             response: {
-                statusCode: 10000,
+                // statusCode: 10000,
             },
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
@@ -38,14 +39,14 @@
                 icon: 'layui-icon-tips'
             }],
             cols: [[
-                {field: 'id', minWidth: 100, title: 'ID', sort: true},
-                {field: 'username', minWidth: 150, title: '账号'},
-                {field: 'name', minWidth: 150, title: '姓名'},
-                {minWidth: 150, title: '状态', templet: function (data) {
-                        return data.state === 0 ? "已申请" : data.state === 1 ? "已同意" : data.state === 2 ? "已拒绝" : "";
-                    }, align: 'center'},
-                {field: 'gmtCreate', minWidth: 200, title: '创建时间', align: 'center', sort: true},
-                {field: 'gmtModified', minWidth: 200, title: '更新时间', align: 'center', sort: true},
+                {field: 'id', width: 200, title: 'ID', sort: true},
+                {field: 'username', minWidth: 80, title: '账号'},
+                {field: 'name', minWidth: 80, title: '姓名'},
+                {field: 'phone', minWidth: 100, title: '手机号'},
+                {field: 'address', minWidth: 200, title: '地址'},
+                {field: 'description', width: 100, title: '状态'},
+                {field: 'createTime', width: 200, title: '创建时间', align: 'center', sort: true},
+                {field: 'updateTime', width: 200, title: '更新时间', align: 'center', sort: true},
             ]],
             page: false,
             limit: Number.MAX_VALUE, // 数据表格默认全部显示

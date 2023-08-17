@@ -37,14 +37,13 @@ public class Account implements Serializable {
     @Id
     @KeySql(genId = IdWorker.class)
     private Long id;
-
-    /** 权限ID */
-    private Long authId;
     /** 用户名 */
     private String username;
     /** BCrypt 加密后的密码 */
     @JsonIgnore //拒绝密码序列化
     private String password;
+    /** 权限 */
+    private Integer auth;
 
     /** 逻辑删除（0未删除，1已删除） */
     @TableLogic

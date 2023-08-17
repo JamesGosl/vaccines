@@ -17,6 +17,7 @@ public class IdWorkerUtils {
     }
 
     public static Long getId() {
+        // TODO 有没有必要使用这种算法生成分布式ID
         return snowflake.nextId();
     }
 }

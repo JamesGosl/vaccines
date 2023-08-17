@@ -4,7 +4,7 @@
     "href": "page/welcome.html"
   },
   "logoInfo": {
-    "title": "VACCINES",
+    "title": "DOCTOR",
     "image": "images/logo.jpg",
     "href": ""
   },
@@ -22,33 +22,33 @@
           "target": "_self"
         },
         {
-          "title": "病人信息",
+          "title": "疫苗信息",
           "href": "page/user/data/manage.html",
-          "icon": "fa fa-group",
+          "icon": "fa fa-eyedropper",
           "target": "_self"
         }
       ]
     },
     {
-      "title": "授权管理",
+      "title": "接种者管理",
       "icon": "fa fa-address-book",
       "href": "",
       "target": "_self",
       "child": [
         {
-          "title": "病人列表",
+          "title": "接种者列表",
           "href": "page/user/auth/user.html",
           "icon": "fa fa-folder-open-o",
           "target": "_self"
         },
         {
-          "title": "添加病人",
+          "title": "添加接种者",
           "href": "page/user/auth/user_search.html",
           "icon": "fa fa-search",
           "target": "_self"
         },
         {
-          "title": "授权通知",
+          "title": "接种者通知",
           "href": "page/user/auth/auth.html",
           "icon": "fa fa-bell-o",
           "target": "_self"

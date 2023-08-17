@@ -55,13 +55,13 @@
                     <a href="javascript:;" data-refresh="刷新"><i class="fa fa-refresh"></i></a>
                 </li>
                 <li class="layui-nav-item" lay-unselect>
-                    <a href="javascript:;" data-clear="清理" class="layuimini-clear"><i class="fa fa-trash-o"></i></a>
+                    <a href="javascript:;" id="clear" data-clear="清理" class="layuimini-clear"><i class="fa fa-trash-o"></i></a>
                 </li>
                 <li class="layui-nav-item mobile layui-hide-xs" lay-unselect>
                     <a href="javascript:;" data-check-screen="full"><i class="fa fa-arrows-alt"></i></a>
                 </li>
                 <li class="layui-nav-item layuimini-setting">
-                    <a href="javascript:;" class="username">admin</a>
+                    <a href="javascript:;" class="username"> <span id="username">admin</span></a>
                     <dl class="layui-nav-child">
                         <dd>
                             <a href="javascript:;" layuimini-content-href="page/user-setting.html" data-title="账号信息" data-icon="fa fa-gears">账号信息</a>
@@ -130,6 +130,16 @@
 <script src="lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
 <script src="js/lay-config.js?v=2.0.0" charset="utf-8"></script>
 <script>
+
+    document.getElementById("clear").onclick = function () {
+        axios.get('/system/clear', {headers: {token: localStorage.token}})
+            .then(function(response){
+            })
+            .catch(function(error){
+                console.log(error);
+            });
+    }
+
     layui.use(['jquery', 'layer', 'miniAdmin','miniTongji'], function () {
         var $ = layui.jquery,
             layer = layui.layer,
@@ -145,6 +155,7 @@
                             window.location = "page/login.html";
                         }, 1000)
                     }
+                    $("#username").html(response.data.data.username);
                 })
                 .catch(function (error) {
                     location.href = "page/login.html";
@@ -152,7 +163,7 @@
         });
 
         var options = {
-            iniUrl: "/info?token=" + localStorage.token,    // 初始化接口
+            iniUrl: "/system/info?token=" + localStorage.token,    // 初始化接口
             clearUrl: "api/clear.json", // 缓存清理接口
             urlHashLocation: true,      // 是否打开hash定位
             bgColorDefault: false,      // 主题默认配置
@@ -162,8 +173,10 @@
             pageAnim: true,             // iframe窗口动画
             maxTabNum: 20,              // 最大的tab打开数量
             type: 'post',
+            headers: {token: localStorage.token}
         };
-        miniAdmin.render(options);
+        // Token 加不上
+        miniAdmin.render(options, {headers: {token: localStorage.token}});
 
         // 百度统计代码，只统计指定域名
         miniTongji.render({

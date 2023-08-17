@@ -46,14 +46,14 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .allowedHeaders("*");
     }
 
-    private static final String[] INCLUDE = {"/auth/**", "/account/**", "/user/**", "/vaccines/**"};
-    private static final String[] EXCLUDE = {"/account/login", "/info", "/vaccines/upload", "/vaccines/download"};
+    private static final String[] INCLUDE = {"/auth/**", "/account/**", "/user/**", "/vaccines/**", "/friend/**", "/system/**"};
+    private static final String[] EXCLUDE = {"/account/login", "/system/info", "/vaccines/upload", "/vaccines/download"};
 
     // 拦截器设置
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AccountHandlerInterceptor()).addPathPatterns(INCLUDE).excludePathPatterns(EXCLUDE);
-        registry.addInterceptor(new InfoHandlerInterceptor()).addPathPatterns("/info", "/vaccines/upload", "/vaccines/download");
+        registry.addInterceptor(new InfoHandlerInterceptor()).addPathPatterns("/system/info", "/vaccines/upload", "/vaccines/download");
 
 //        registry.addInterceptor(new RequestInfoHandlerInterceptor()).addPathPatterns(INCLUDE).excludePathPatterns(EXCLUDE);
 //        registry.addInterceptor(new DebugHandlerInterceptor()).addPathPatterns("/**");

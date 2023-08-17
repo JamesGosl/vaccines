@@ -8,6 +8,8 @@ import lombok.experimental.Accessors;
 import org.james.gos.vaccines.common.annotation.FieldFill;
 import org.james.gos.vaccines.common.annotation.TableField;
 import org.james.gos.vaccines.common.annotation.TableLogic;
+import org.james.gos.vaccines.common.plugins.IdWorker;
+import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -32,13 +34,16 @@ public class Friend implements Serializable {
 
     /** id */
     @Id
+    @KeySql(genId = IdWorker.class)
     private Long id;
 
     /** 申请人账户id */
     private Long accountId;
     /** 被申请人账户id */
     private Long friendId;
-    /** 申请状态（0没处理、1同意、2拒绝） */
+    /** 描述字段 */
+    private String description;
+    /** 申请状态（0没处理、1已处理） */
     private Integer status;
 
     /** 逻辑删除（0未删除，1已删除） */

@@ -8,22 +8,20 @@ import org.james.gos.vaccines.account.doman.dto.AccountPageDTO;
 import org.james.gos.vaccines.account.doman.entity.Account;
 import org.james.gos.vaccines.account.mapper.AccountMapper;
 import org.james.gos.vaccines.account.service.IAccountService;
-import org.james.gos.vaccines.auth.doman.vo.response.AuthResp;
-import org.james.gos.vaccines.auth.service.IAuthService;
 import org.james.gos.vaccines.common.constant.CacheKey;
 import org.james.gos.vaccines.common.constant.RedisKey;
 import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
+import org.james.gos.vaccines.common.event.ClearCacheApplicationEvent;
 import org.james.gos.vaccines.common.utils.CacheUtils;
 import org.james.gos.vaccines.common.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * 账户信息 缓存
@@ -33,14 +31,12 @@ import java.util.stream.Collectors;
  */
 @Component
 @Slf4j
-public class AccountCache {
+public class AccountCache implements ApplicationListener<ClearCacheApplicationEvent> {
 
     @Resource
     private AccountMapper accountMapper;
     @Autowired
     private IAccountService accountService;
-    @Autowired
-    private IAuthService authService;
 
     /**
      * 获取所有账户信息
@@ -49,14 +45,9 @@ public class AccountCache {
     public List<AccountDTO> getAccountAll() {
         // 只使用本地缓存 不使用Redis 不然太复杂了
         List<Account> accounts = accountService.selectAll();
-        List<AuthResp> authAll = authService.getAuthAll();
 
         // 构建DTO
-        return accounts.stream().map(account -> {
-            AuthResp authResp =
-                    authAll.stream().filter(auth -> Objects.equals(auth.getId(), account.getAuthId())).findFirst().orElse(null);
-            return AccountDTO.build(account, authResp);
-        }).collect(Collectors.toList());
+        return AccountDTO.build(accounts);
     }
 
     /**
@@ -68,17 +59,9 @@ public class AccountCache {
 
         Page<Account> page = PageMethod.startPage(pageBaseReq.getPage(), pageBaseReq.getLimit());
         List<Account> accounts = accountService.selectAll();
-        List<AuthResp> authAll = authService.getAuthAll();
-
-        List<AccountDTO> collect = accounts.stream().map(account -> {
-            AuthResp authResp =
-                    authAll.stream().filter(auth -> Objects.equals(auth.getId(), account.getAuthId())).findFirst().orElse(null);
-            return AccountDTO.build(account, authResp);
-        }).collect(Collectors.toList());
-
 
         // 构建DTO
-        return AccountPageDTO.build(page, collect);
+        return AccountPageDTO.build(page, AccountDTO.build(accounts));
     }
 
     /**
@@ -118,12 +101,8 @@ public class AccountCache {
         if (accountDTO == null) {
             log.debug("Redis 缓存未击中-{}", id);
             Account account = accountService.selectById(id);
-            // 获取权限
-            AuthResp auth = authService.getAuth(account.getAuthId());
-            // 构建DTO
-            accountDTO = AccountDTO.build(account, auth);
             // 设置缓存
-            setAccount(id, accountDTO);
+            setAccount(id, AccountDTO.build(account));
         }
         return accountDTO;
     }
@@ -136,7 +115,7 @@ public class AccountCache {
     @CacheEvict(cacheNames = CacheKey.ACCOUNT, key = "'account-' + #id")
     public void delAccount(Long id) {
         // 清除本地缓存
-        CacheUtils.del(CacheKey.ACCOUNT);
+        clear();
         // 清除Redis 缓存
         if (!RedisUtils.del(RedisKey.getKey(RedisKey.ACCOUNT, id))) {
             log.error("删除账户缓存错误-{}", id);
@@ -163,6 +142,8 @@ public class AccountCache {
      */
     @Cacheable(cacheNames = CacheKey.ACCOUNT, key = "'token-' + #id")
     public String getToken(Long id) {
+        // TODO 强依赖的数据是否要采用本地缓存
+
         log.debug("本地缓存未击中-{}", id);
         return RedisUtils.get(RedisKey.getKey(RedisKey.TOKEN, id), String.class);
     }
@@ -177,5 +158,18 @@ public class AccountCache {
         if (!RedisUtils.del(RedisKey.getKey(RedisKey.TOKEN, id))) {
             log.error("删除令牌缓存错误-{}", id);
         }
+    }
+
+    public void clear() {
+        // 清除本地缓存
+        CacheUtils.del(CacheKey.ACCOUNT);
+    }
+
+    @Override
+    public void onApplicationEvent(ClearCacheApplicationEvent event) {
+        Object source = event.getSource();
+        log.debug("清除缓存 -> {}", source.toString());
+
+        clear();
     }
 }

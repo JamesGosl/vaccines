@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author James Gosl
  * @since 2023/08/15 16:18
  */
-@EnableCaching
+@EnableCaching(proxyTargetClass = true)
 @SpringBootConfiguration
 public class CacheConfiguration extends CachingConfigurerSupport {
 

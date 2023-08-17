@@ -7,8 +7,13 @@ import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
 import org.james.gos.vaccines.common.doman.vo.request.IdReq;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
 import org.james.gos.vaccines.common.exception.InsertRuntimeException;
+import org.james.gos.vaccines.friend.doman.dto.FriendDTO;
+import org.james.gos.vaccines.friend.service.IFriendService;
+import org.james.gos.vaccines.user.doman.vo.response.UserResp;
+import org.james.gos.vaccines.user.service.IUserService;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
+import org.james.gos.vaccines.vaccines.doman.vo.response.VAUResp;
 import org.james.gos.vaccines.vaccines.mapper.VaccinesMapper;
 import org.james.gos.vaccines.vaccines.service.IVaccinesService;
 import org.james.gos.vaccines.vaccines.service.apadter.VaccinesAdapter;
@@ -21,7 +26,11 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * VaccinesService
@@ -37,6 +46,10 @@ public class VaccinesService implements IVaccinesService {
     private VaccinesCache vaccinesCache;
     @Autowired
     private IAccountService accountService;
+    @Autowired
+    private IFriendService friendService;
+    @Autowired
+    private IUserService userService;
 
     @Override
     public void insertVaccines(Long aid) {
@@ -91,5 +104,52 @@ public class VaccinesService implements IVaccinesService {
         } else {
             throw new AccountRuntimeException("权限不足");
         }
+    }
+
+    @Override
+    public List<VAUResp> vau(Long aid) {
+        // 获取账户
+        AccountDTO account = accountService.getAccount(aid);
+        AuthEnum auth = AuthEnum.of(account.getAuth());
+        switch (auth) {
+            // admin 获取所有信息
+            case ADMIN:
+                List<AccountDTO> accountAll = accountService.getAccountAll(aid);
+                return accountAll.stream().map(this::vau).collect(Collectors.toList());
+            // doctor、user 获取关联的
+            case DOCTOR:
+            case USER:
+                // 关系表
+                List<FriendDTO> friends = friendService.getFriends(aid);
+                // 关系表中的对应去查询
+                List<VAUResp> vauResps = new ArrayList<>(friends.size());
+                // 不能查询到医生的
+                for (FriendDTO friend : friends) {
+                    AccountDTO accountDTO = accountService.getAccount(friend.getFriendId());
+                    // 不能查询医生
+                    if(auth.equals(AuthEnum.USER) && AuthEnum.of(accountDTO.getAuth()).equals(AuthEnum.DOCTOR)) {
+                        continue;
+                    }
+                    vauResps.add(vau(accountDTO));
+                }
+                // 查询自己的
+                if (auth.equals(AuthEnum.USER)) {
+                    vauResps.add(vau(account));
+                }
+                return vauResps;
+        }
+
+        return Collections.emptyList();
+    }
+
+    public VAUResp vau(AccountDTO accountDTO) {
+        // 账户信息
+        Long aid = accountDTO.getId();
+        // 用户信息
+        UserResp user = userService.getUser(aid);
+        // 疫苗信息
+        VaccinesDTO vaccines = getVaccinesByAid(aid);
+        // 聚合
+        return VaccinesAdapter.buildAUV(accountDTO, user, vaccines);
     }
 }

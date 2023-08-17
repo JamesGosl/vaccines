@@ -1,7 +1,9 @@
 package org.james.gos.vaccines.vaccines.service.cache;
 
+import lombok.extern.slf4j.Slf4j;
 import org.james.gos.vaccines.common.constant.CacheKey;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
+import org.james.gos.vaccines.common.event.ClearCacheApplicationEvent;
 import org.james.gos.vaccines.common.utils.CacheUtils;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 import org.james.gos.vaccines.vaccines.doman.entity.Vaccines;
@@ -9,6 +11,7 @@ import org.james.gos.vaccines.vaccines.mapper.VaccinesMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
 
@@ -19,7 +22,8 @@ import tk.mybatis.mapper.entity.Example;
  * @since 2023/08/16 21:47
  */
 @Component
-public class VaccinesCache {
+@Slf4j
+public class VaccinesCache implements ApplicationListener<ClearCacheApplicationEvent> {
 
     @Autowired
     private VaccinesMapper vaccinesMapper;
@@ -56,5 +60,13 @@ public class VaccinesCache {
             // 清除缓存
             CacheUtils.del(CacheKey.VACCINES);
         }
+    }
+
+    @Override
+    public void onApplicationEvent(ClearCacheApplicationEvent event) {
+        Object source = event.getSource();
+        log.debug("清除缓存 -> {}", source.toString());
+
+        CacheUtils.del(CacheKey.VACCINES);
     }
 }

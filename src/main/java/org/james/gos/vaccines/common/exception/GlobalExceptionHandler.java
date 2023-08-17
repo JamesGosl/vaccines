@@ -70,6 +70,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理自己异常
+     */
+    @ExceptionHandler(value = RuntimeException.class)
+    public ApiResult<Void> runtimeException(RuntimeException e) {
+        log.error("account exception! The reason is:", e);
+        return ApiResult.fail(CommonErrorEnum.ACCOUNT.getErrorCode(), e.getMessage());
+    }
+
+    /**
      * 未知异常
      */
     @ExceptionHandler(value = Exception.class)

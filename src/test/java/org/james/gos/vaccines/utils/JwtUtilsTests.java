@@ -30,7 +30,7 @@ public class JwtUtilsTests {
     @Test
     public void getUidOrNull() {
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjEsImNyZWF0ZVRpbWUiOjE2OTIxMDE2MDQsImV4cCI6MTY5MjEwMTYwNn0.FXj0BYTTQhKpnb10BqEtsLwqPXVFoPvLbeenDov2LOw";
-        Long uidOrNull = jwtUtils.getUidOrNull(token);
+        Long uidOrNull = jwtUtils.getAidOrNull(token);
         log.debug(uidOrNull.toString());
     }
 }

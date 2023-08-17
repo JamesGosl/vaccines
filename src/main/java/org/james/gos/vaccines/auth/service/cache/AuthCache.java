@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.james.gos.vaccines.auth.doman.entity.Auth;
 import org.james.gos.vaccines.auth.mapper.AuthMapper;
 import org.james.gos.vaccines.common.constant.CacheKey;
+import org.james.gos.vaccines.common.event.ClearCacheApplicationEvent;
 import org.james.gos.vaccines.common.utils.CacheUtils;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
 
@@ -20,7 +22,7 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class AuthCache {
+public class AuthCache implements ApplicationListener<ClearCacheApplicationEvent> {
 
     @Resource
     private AuthMapper authMapper;
@@ -67,5 +69,14 @@ public class AuthCache {
         Example example = new Example(Auth.class);
         example.createCriteria().andEqualTo("auth", auth);
         return authMapper.selectOneByExample(example);
+    }
+
+
+    @Override
+    public void onApplicationEvent(ClearCacheApplicationEvent event) {
+        Object source = event.getSource();
+        log.debug("清除缓存 -> {}", source.toString());
+
+        CacheUtils.del(CacheKey.AUTH);
     }
 }

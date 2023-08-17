@@ -24,9 +24,14 @@ public class CacheKey {
     public static final String USER = "user";
 
     /**
-     * 用户信息
+     * 疫苗信息
      */
     public static final String VACCINES = "vaccines";
+
+    /**
+     * 好友信息
+     */
+    public static final String FRIEND = "vaccines";
 
     /**
      * 系统信息

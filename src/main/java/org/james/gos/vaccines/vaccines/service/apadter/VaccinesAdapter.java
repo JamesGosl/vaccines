@@ -6,8 +6,13 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.james.gos.vaccines.account.doman.dto.AccountDTO;
+import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
+import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
+import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 import org.james.gos.vaccines.vaccines.doman.entity.Vaccines;
+import org.james.gos.vaccines.vaccines.doman.vo.response.VAUResp;
 import org.james.gos.vaccines.vaccines.doman.vo.response.VaccinesResp;
 
 import java.io.ByteArrayInputStream;
@@ -70,5 +75,20 @@ public class VaccinesAdapter {
             log.error("解析错误->{}", vaccinesDTO.getId());
             return null;
         }
+    }
+
+    public static VAUResp buildAUV(AccountDTO accountDTO, UserResp user, VaccinesDTO vaccines) {
+        VAUResp vauResp = new VAUResp();
+        if(vaccines != null) {
+            vauResp.setId(vaccines.getId());
+            if (vaccines.getContent() != null) {
+                vauResp.setState(YesOrNoEnum.YES.getStatus());
+            } else {
+                vauResp.setState(YesOrNoEnum.NO.getStatus());
+            }
+        }
+        vauResp.setUsername(accountDTO.getUsername());
+        vauResp.setName(user.getName());
+        return vauResp;
     }
 }

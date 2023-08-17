@@ -4,7 +4,7 @@
     "href": "page/welcome.html"
   },
   "logoInfo": {
-    "title": "VACCINES",
+    "title": "USER",
     "image": "images/logo.jpg",
     "href": ""
   },
@@ -22,33 +22,33 @@
             "target": "_self"
           },
           {
-            "title": "亲友信息",
+            "title": "疫苗信息",
             "href": "page/user/data/manage.html",
-            "icon": "fa fa-group",
+            "icon": "fa fa-eyedropper",
             "target": "_self"
           }
       ]
     },
     {
-      "title": "授权管理",
+      "title": "好友管理",
       "icon": "fa fa-address-book",
       "href": "",
       "target": "_self",
       "child": [
           {
-            "title": "亲友列表",
+            "title": "好友列表",
             "href": "page/user/auth/user.html",
-            "icon": "fa fa-cog",
+            "icon": "fa fa-group",
             "target": "_self"
           },
           {
-            "title": "添加亲友",
+            "title": "添加好友",
             "href": "page/user/auth/user_search.html",
             "icon": "fa fa-search",
             "target": "_self"
           },
           {
-            "title": "授权通知",
+            "title": "好友通知",
             "href": "page/user/auth/auth.html",
             "icon": "fa fa-bell-o",
             "target": "_self"

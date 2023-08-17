@@ -6,6 +6,7 @@ import org.james.gos.vaccines.account.doman.dto.AccountDTO;
 import org.james.gos.vaccines.account.doman.dto.AccountPageDTO;
 import org.james.gos.vaccines.account.doman.entity.Account;
 import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
+import org.james.gos.vaccines.account.doman.vo.response.AUResp;
 import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
 import org.james.gos.vaccines.account.doman.vo.response.AccountPageResp;
 import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
@@ -82,5 +83,29 @@ public class AccountAdapter {
         auvResp.setUsername(accountDTO.getUsername());
         auvResp.setName(user.getName());
         return auvResp;
+    }
+
+    public static AUResp buildAU(AccountDTO account, UserResp user) {
+        AUResp auResp = new AUResp();
+        auResp.setId(account.getId());
+        auResp.setUsername(account.getUsername());
+        auResp.setName(user.getName());
+        auResp.setPhone(user.getPhone());
+        auResp.setAddress(user.getAddress());
+        return auResp;
+    }
+
+    public static AUResp buildAU(Account account, UserResp user) {
+        AUResp auResp = new AUResp();
+        auResp.setId(account.getId());
+        auResp.setUsername(account.getUsername());
+        auResp.setName(user.getName());
+        auResp.setPhone(user.getPhone());
+        auResp.setAddress(user.getAddress());
+        return auResp;
+    }
+
+    public static AUResp buildAUEmpty() {
+        return new AUResp();
     }
 }

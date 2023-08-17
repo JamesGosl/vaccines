@@ -167,7 +167,6 @@
         }
 
         $(document).ready(function () {
-            axios.defaults.withCredentials = true;
             axios.get('/user', {headers: {token: localStorage.token}})
                 .then(function(response){
                     console.log(response);
@@ -353,7 +352,7 @@
         $('.next').click(function () {
             $("#name").html(person.name);
             $("#phone").html(person.phone);
-            $("#path").html(person.path);
+            $("#address").html(person.address);
 
             $(".layui-form")[0].reset();
             layui.form.render();

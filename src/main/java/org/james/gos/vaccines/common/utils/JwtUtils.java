@@ -1,13 +1,10 @@
 package org.james.gos.vaccines.common.utils;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,11 +35,11 @@ public class JwtUtils {
      * JWT 生成Token.
      * JWT 构成: header, payload, signature
      */
-    public String createToken(Long uid) {
+    public String createToken(Long aid) {
         // build token
         return JWT.create()
-                // 只存一个uid信息，其他的自己去redis 查
-                .withClaim(UID_CLAIM, uid)
+                // 只存一个aid 信息，其他的自己去redis 查
+                .withClaim(UID_CLAIM, aid)
                 // 创建时间
                 .withClaim(CREATE_TIME, new Date())
                 // 过期时间 不设置过期时间 否则还得有其他复杂的操作
@@ -70,10 +67,10 @@ public class JwtUtils {
     }
 
     /**
-     * 根据Token 获取uid
+     * 根据Token 获取Aid
      * JWT 构成: header, payload, signature
      */
-    public Long getUidOrNull(String token) {
+    public Long getAidOrNull(String token) {
         return Optional.ofNullable(verifyToken(token))
                 .map(map -> map.get(UID_CLAIM))
                 .map(Claim::asLong)

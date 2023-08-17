@@ -11,8 +11,15 @@ public interface ISystemService {
     /**
      * 返回系统初始化文件 前端的
      *
-     * @param id 用户id
+     * @param aid 账户id
      * @return 初始化文件
      */
-    String info(Long id);
+    String info(Long aid);
+
+    /**
+     * 清除系统缓存
+     *
+     * @param aid 账户Id
+     */
+    void clear(Long aid);
 }

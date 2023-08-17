@@ -6,7 +6,6 @@ import org.james.gos.vaccines.common.doman.vo.request.RequestInfo;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
 import org.james.gos.vaccines.common.utils.JwtUtils;
 import org.james.gos.vaccines.common.utils.RequestHolder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -29,7 +28,7 @@ public class RequestInfoHandlerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         try {
-            Long uid = jwtUtils.getUidOrNull(request.getHeader(RequestKey.TOKEN));
+            Long uid = jwtUtils.getAidOrNull(request.getHeader(RequestKey.TOKEN));
             RequestHolder.set(new RequestInfo().setId(uid));
         } catch (Exception e) {
             throw new AccountRuntimeException("你这有毛病啊");

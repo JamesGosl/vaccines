@@ -172,7 +172,7 @@
 
                     axios.delete('/account', {params: {id: data.id}, headers: {token: localStorage.token}})
                         .then(function(response){
-                            if (response.data.code === 10000) {
+                            if (response.data.success) {
                                 layer.msg('删除成功', {icon: 1,time:1000, shade:0.4});
 
                                 // 刷新此窗口
@@ -180,7 +180,7 @@
                                     window.location.reload()
                                 }, 1000)
                             } else {
-                                layer.msg('删除失败', {icon: 2, time:1000, shade:0.4});
+                                layer.msg(response.data.errMsg, {icon: 2, time:1000, shade:0.4});
                             }
                         })
                         .catch(function(error){

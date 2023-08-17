@@ -3,8 +3,10 @@ package org.james.gos.vaccines.vaccines.service;
 import org.james.gos.vaccines.common.doman.vo.request.IdReq;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
+import org.james.gos.vaccines.vaccines.doman.vo.response.VAUResp;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 疫苗表 逻辑层
@@ -63,4 +65,11 @@ public interface IVaccinesService {
      * @param response 响应
      */
     void download(Long aid, IdReq idReq, HttpServletResponse response);
+
+    /**
+     * 疫苗信息集合
+     *
+     * @param aid 账户id
+     */
+    List<VAUResp> vau(Long aid);
 }

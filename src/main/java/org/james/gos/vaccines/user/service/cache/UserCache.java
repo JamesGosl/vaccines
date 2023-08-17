@@ -2,12 +2,16 @@ package org.james.gos.vaccines.user.service.cache;
 
 import lombok.extern.slf4j.Slf4j;
 import org.james.gos.vaccines.common.constant.CacheKey;
+import org.james.gos.vaccines.common.event.ClearCacheApplicationEvent;
+import org.james.gos.vaccines.common.utils.CacheUtils;
 import org.james.gos.vaccines.user.doman.dto.UserDTO;
 import org.james.gos.vaccines.user.doman.entity.User;
 import org.james.gos.vaccines.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
 
@@ -19,7 +23,7 @@ import tk.mybatis.mapper.entity.Example;
  */
 @Component
 @Slf4j
-public class UserCache {
+public class UserCache implements ApplicationListener<ClearCacheApplicationEvent> {
     @Autowired
     private UserMapper userMapper;
 
@@ -41,7 +45,7 @@ public class UserCache {
      *
      * @param user 用户信息
      */
-    @CachePut(cacheNames = CacheKey.USER, key = "'user-' + #user.accountId")
+    @CacheEvict(cacheNames = CacheKey.USER, key = "'user-' + #user.accountId")
     public void updateUser(User user) {
         userMapper.updateByPrimaryKeySelective(user);
     }
@@ -56,5 +60,13 @@ public class UserCache {
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("accountId", aid);
         userMapper.deleteByExample(example);
+    }
+
+    @Override
+    public void onApplicationEvent(ClearCacheApplicationEvent event) {
+        Object source = event.getSource();
+        log.debug("清除缓存 -> {}", source.toString());
+
+        CacheUtils.del(CacheKey.USER);
     }
 }

@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiOperation;
 import org.james.gos.vaccines.account.doman.dto.AccountPageDTO;
 import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
 import org.james.gos.vaccines.account.doman.vo.request.LoginReq;
+import org.james.gos.vaccines.account.doman.vo.request.UsernameReq;
+import org.james.gos.vaccines.account.doman.vo.response.AUResp;
 import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
 import org.james.gos.vaccines.account.doman.vo.response.AccountPageResp;
 import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
@@ -98,5 +100,11 @@ public class AccountController {
     @ApiOperation("获取账户疫苗情况列表")
     public ApiResult<List<AUVResp>> auv() {
         return ApiResult.success(accountService.auv(RequestHolder.get().getId()));
+    }
+
+    @GetMapping("/au")
+    @ApiOperation("查找账户")
+    public ApiResult<List<AUResp>> au(@Valid UsernameReq usernameReq) {
+        return ApiResult.success(accountService.au(RequestHolder.get().getId(), usernameReq.getUsername()));
     }
 }

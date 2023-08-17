@@ -5,18 +5,19 @@ import org.james.gos.vaccines.account.doman.dto.AccountPageDTO;
 import org.james.gos.vaccines.account.doman.entity.Account;
 import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
 import org.james.gos.vaccines.account.doman.vo.request.LoginReq;
+import org.james.gos.vaccines.account.doman.vo.response.AUResp;
 import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
 import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
 import org.james.gos.vaccines.account.mapper.AccountMapper;
 import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.account.service.adapter.AccountAdapter;
 import org.james.gos.vaccines.account.service.cache.AccountCache;
-import org.james.gos.vaccines.auth.service.IAuthService;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
 import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
 import org.james.gos.vaccines.common.utils.JwtUtils;
+import org.james.gos.vaccines.friend.service.IFriendService;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 import org.james.gos.vaccines.user.service.IUserService;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
@@ -31,6 +32,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -49,13 +51,13 @@ public class AccountService implements IAccountService {
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
-    private IAuthService authService;
-    @Autowired
     private AccountCache accountCache;
     @Autowired
     private IUserService userService;
     @Autowired
     private IVaccinesService vaccinesService;
+    @Autowired
+    private IFriendService friendService;
 
     @Override
     public AccountResp login(LoginReq loginReq) {
@@ -65,7 +67,7 @@ public class AccountService implements IAccountService {
         // 效验密码
         if (account != null && passwordEncoder.matches(loginReq.getUsername(), account.getPassword())) {
             // 构建DTO
-            AccountDTO accountDTO = AccountDTO.build(account, authService.getAuth(account.getAuthId()));
+            AccountDTO accountDTO = AccountDTO.build(account);
 
             // 构建Token
             Long key = account.getId();
@@ -81,16 +83,42 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public void logout(Long id) {
+    public void logout(Long aid) {
         // 清除Token
-        accountCache.delToken(id);
+        accountCache.delToken(aid);
     }
 
+    // TODO 缓存？
     @Override
     public Account selectByUsername(String username) {
         Example example = new Example(Account.class);
         example.createCriteria().andEqualTo("username", username);
         return accountMapper.selectOneByExample(example);
+    }
+
+    @Override
+    public Account selectByUsername(String username, Integer auth) {
+        Example example = new Example(Account.class);
+        example.createCriteria()
+                .andEqualTo("username", username)
+                .andEqualTo("auth", auth);
+        return accountMapper.selectOneByExample(example);
+    }
+
+    @Override
+    public List<Account> selectByUsernameLike(String username) {
+        Example example = new Example(Account.class);
+        example.createCriteria().andLike("username", "%" + username + "%");
+        return accountMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<Account> selectByUsernameLike(String username, Integer auth) {
+        Example example = new Example(Account.class);
+        example.createCriteria()
+                .andLike("username", "%" + username + "%")
+                .andEqualTo("auth", auth);
+        return accountMapper.selectByExample(example);
     }
 
     @Override
@@ -110,21 +138,23 @@ public class AccountService implements IAccountService {
         AuthEnum auth = AuthEnum.of(account.getAuth());
         Long id = accountReq.getId();
 
+        // TODO 下面的操作优化
+
         // 新增操作
-        if(null == id && auth == AuthEnum.ADMIN) {
-            insert(AccountAdapter.buildAccount(accountReq).setAuthId(authService.getAuth(accountReq.getAuth()).getId()));
+        if(null == id && auth.equals(AuthEnum.ADMIN)) {
+            insert(AccountAdapter.buildAccount(accountReq));
         }
         // 更新自己账号操作
         else if(aid.equals(id)) {
             update(AccountAdapter.buildAccount(accountReq));
         }
         // 更新别人账号操作
-        else if(auth == AuthEnum.ADMIN) {
-            update(AccountAdapter.buildAccount(accountReq).setAuthId(authService.getAuth(accountReq.getAuth()).getId()));
+        else if(auth.equals(AuthEnum.ADMIN)) {
+            update(AccountAdapter.buildAccount(accountReq));
         }
         // 没权限
         else {
-            throw new AccountRuntimeException("你这个权限有点问题");
+            throw new AccountRuntimeException();
         }
     }
 
@@ -138,7 +168,7 @@ public class AccountService implements IAccountService {
                 .setPassword(passwordEncoder.encode(account.getPassword()));
 
         try {
-            if (accountMapper.insertSelective(account) == YesOrNoEnum.NO.getStatus()) {
+            if (YesOrNoEnum.of(accountMapper.insertSelective(account)).equals(YesOrNoEnum.NO)) {
                 throw new RuntimeException("账户新增失败->" + account.getUsername());
             }
         } catch (DuplicateKeyException e) {
@@ -160,7 +190,7 @@ public class AccountService implements IAccountService {
 
         // 更新失败则有问题
         try {
-            if (accountMapper.updateByPrimaryKeySelective(account) == YesOrNoEnum.YES.getStatus()) {
+            if (YesOrNoEnum.of(accountMapper.updateByPrimaryKeySelective(account)).equals(YesOrNoEnum.YES)) {
                 accountCache.delToken(id);
                 accountCache.delAccount(id);
             } else {
@@ -174,29 +204,32 @@ public class AccountService implements IAccountService {
     @Override
     @Transactional
     public void deleted(Long aid, Long id) {
+        if(aid.equals(id))
+            throw new RuntimeException("不能删除自己");
+
         // 判断权限
-        validate(id);
+        validate(aid);
 
         // 删除，去缓存中删除
         accountCache.delAccount(id);
         accountCache.delToken(id);
-        if (accountMapper.deleteByPrimaryKey(id) == YesOrNoEnum.NO.getStatus()) {
+        if (YesOrNoEnum.NO.getStatus().equals(accountMapper.deleteByPrimaryKey(id))) {
             throw new RuntimeException("账户删除失败->" + id);
         }
 
-        // 删除用户信息
-        userService.deletedUser(id);
+        // 其他的信息还可以继续访问
+//        userService.deletedUser(id);
     }
 
     @Override
-    public AccountDTO getAccount(Long id) {
-        return accountCache.getAccount(id);
+    public AccountDTO getAccount(Long aid) {
+        return accountCache.getAccount(aid);
     }
 
     @Override
-    public List<AccountDTO> getAccountAll(Long id) {
+    public List<AccountDTO> getAccountAll(Long aid) {
         // 判断权限
-        validate(id);
+        validate(aid);
         // 缓存中查找
         return accountCache.getAccountAll();
     }
@@ -212,10 +245,10 @@ public class AccountService implements IAccountService {
     @Override
     public AccountDTO validate(Long aid) {
         AccountDTO account = getAccount(aid);
-        if(AuthEnum.of(account.getAuth()) == AuthEnum.ADMIN) {
+        if(AuthEnum.of(account.getAuth()).equals(AuthEnum.ADMIN)) {
             return account;
         }
-        throw new RuntimeException("权限不足");
+        throw new AccountRuntimeException();
     }
 
     @Override
@@ -245,5 +278,66 @@ public class AccountService implements IAccountService {
         VaccinesDTO vaccines = vaccinesService.getVaccinesByAid(aid);
         // 聚合数据
         return AccountAdapter.buildAUV(accountDTO, user, vaccines);
+    }
+
+    @Override
+    public List<AUResp> au(Long aid, String username) {
+        AccountDTO account = getAccount(aid);
+        List<Account> accounts = null;
+
+        switch (AuthEnum.of(account.getAuth())) {
+            // 支持模糊查询
+            case DOCTOR:
+                accounts = selectByUsernameLike(username, AuthEnum.USER.getAuth());
+                break;
+
+            // 必须精确查询
+            case USER:
+                Account acc = selectByUsername(username, AuthEnum.USER.getAuth());
+                if (Objects.isNull(acc)) {
+                    return Collections.emptyList();
+                }
+                accounts = Collections.singletonList(acc);
+                break;
+        }
+
+        if (Objects.isNull(accounts)) {
+            return Collections.emptyList();
+        }
+
+        // 数据聚合
+        return accounts.stream().map(acc -> {
+            UserResp user = userService.getUser(acc.getId());
+            return AccountAdapter.buildAU(acc, user);
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean verify(String token) {
+        Long aid = jwtUtils.getAidOrNull(token);
+        if (Objects.isNull(aid)) {
+            return false;
+        }
+        // 有可能token失效了，需要校验是不是和最新token一致
+        return Objects.equals(token, accountCache.getToken(aid));
+    }
+
+    @Override
+    public Long getAid(String token) {
+        return verify(token) ? jwtUtils.getAidOrNull(token) : null;
+    }
+
+    @Override
+    public void friend(Long aid, Long id) {
+        if (Objects.equals(aid, id))
+            throw new RuntimeException("不能添加自己");
+
+        // 确定这个是接种者的ID
+        AccountDTO account = accountCache.getAccount(id);
+        if (AuthEnum.of(account.getAuth()).equals(AuthEnum.USER)) {// 建立关系、添加消息
+            friendService.insert(aid, id);
+            return;
+        }
+        throw new RuntimeException("错误操作");
     }
 }

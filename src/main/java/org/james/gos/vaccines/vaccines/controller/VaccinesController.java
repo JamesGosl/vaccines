@@ -7,6 +7,7 @@ import org.james.gos.vaccines.common.doman.vo.request.IdReq;
 import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
 import org.james.gos.vaccines.common.utils.RequestHolder;
 import org.james.gos.vaccines.vaccines.doman.entity.Vaccines;
+import org.james.gos.vaccines.vaccines.doman.vo.response.VAUResp;
 import org.james.gos.vaccines.vaccines.doman.vo.response.VaccinesResp;
 import org.james.gos.vaccines.vaccines.service.IVaccinesService;
 import org.james.gos.vaccines.vaccines.service.apadter.VaccinesAdapter;
@@ -19,6 +20,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * 疫苗信息 视图层
@@ -38,6 +40,13 @@ public class VaccinesController {
     public ApiResult<VaccinesResp> getVaccines(@Valid IdReq idReq) {
         return ApiResult.success(VaccinesAdapter.build(vaccinesService.getVaccines(idReq.getId())));
     }
+
+    @GetMapping("/vau")
+    @ApiOperation("获取疫苗列表")
+    public ApiResult<List<VAUResp>> vau() {
+        return ApiResult.success(vaccinesService.vau(RequestHolder.get().getId()));
+    }
+
 
     @PostMapping("/upload")
     @ApiOperation("上传疫苗信息")

@@ -5,6 +5,7 @@ import org.james.gos.vaccines.account.doman.dto.AccountPageDTO;
 import org.james.gos.vaccines.account.doman.entity.Account;
 import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
 import org.james.gos.vaccines.account.doman.vo.request.LoginReq;
+import org.james.gos.vaccines.account.doman.vo.response.AUResp;
 import org.james.gos.vaccines.account.doman.vo.response.AUVResp;
 import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
 import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
@@ -30,17 +31,17 @@ public interface IAccountService {
     /**
      * 退出登录
      *
-     * @param id 账户id
+     * @param aid 账户id
      */
-    void logout(Long id);
+    void logout(Long aid);
 
     /**
      * 获得账号信息
      *
-     * @param id 账号id
+     * @param aid 账号id
      * @return 账号信息
      */
-    AccountDTO getAccount(Long id);
+    AccountDTO getAccount(Long aid);
 
     /**
      * 效验权限
@@ -106,6 +107,32 @@ public interface IAccountService {
     Account selectByUsername(String username);
 
     /**
+     * 根据用户名/权限查询账户
+     *
+     * @param username 用户名
+     * @param auth 权限
+     * @return 账户信息
+     */
+    Account selectByUsername(String username, Integer auth);
+
+    /**
+     * 根据用户名查询账户 模糊
+     *
+     * @param username 用户名
+     * @return 账户信息
+     */
+    List<Account>  selectByUsernameLike(String username);
+
+    /**
+     * 根据用户名/权限查询账户 模糊
+     *
+     * @param username 用户名
+     * @param auth 权限
+     * @return 账户信息
+     */
+    List<Account>  selectByUsernameLike(String username, Integer auth);
+
+    /**
      * 根据id 查询账户
      *
      * @param id 账户ID
@@ -126,4 +153,33 @@ public interface IAccountService {
      * @param accountDTO 账户
      */
     AUVResp auv(AccountDTO accountDTO);
+
+    /**
+     * 获取账户用户信息
+     *
+     * @param username 账户名
+     */
+    List<AUResp> au(Long aid, String username);
+
+    /**
+     * 效验Token 是否有效
+     *
+     * @param token Token
+     */
+    boolean verify(String token);
+
+    /**
+     * 获取用户Id
+     *
+     * @return 用户Id
+     */
+    Long getAid(String token);
+
+    /**
+     * 添加好友请求
+     *
+     * @param aid 账户id
+     * @param id 被添加id
+     */
+    void friend(Long aid, Long id);
 }
