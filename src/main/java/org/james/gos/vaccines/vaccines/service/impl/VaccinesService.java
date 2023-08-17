@@ -1,10 +1,14 @@
 package org.james.gos.vaccines.vaccines.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.page.PageMethod;
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
 import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
 import org.james.gos.vaccines.common.doman.vo.request.IdReq;
+import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
+import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
 import org.james.gos.vaccines.common.exception.AccountErrorEnum;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
 import org.james.gos.vaccines.common.exception.CommonErrorEnum;
@@ -136,6 +140,44 @@ public class VaccinesService implements IVaccinesService {
         }
 
         return Collections.emptyList();
+    }
+
+    @Override
+    public PageBaseResp<VAUResp> vau(Long aid, PageBaseReq request) {
+        // 获取账户
+        AccountDTO account = accountService.getAccount(aid);
+        AuthEnum auth = AuthEnum.of(account.getAuth());
+        switch (auth) {
+            // admin 获取所有信息
+            case ADMIN:
+//                Page<User> pageUser = PageMethod.startPage(request.getPage(), request.getLimit());
+                List<AccountDTO> accountAll = accountService.getAccountAll(aid);
+
+//                return accountAll.stream().map(this::vau).collect(Collectors.toList());
+            // doctor、user 获取关联的
+            case DOCTOR:
+            case USER:
+                // 关系表
+                List<FriendDTO> friends = friendService.getFriends(aid);
+                // 关系表中的对应去查询
+                List<VAUResp> vauResps = new ArrayList<>(friends.size());
+                // 不能查询到医生的
+                for (FriendDTO friend : friends) {
+                    AccountDTO accountDTO = accountService.getAccount(friend.getFriendId());
+                    // 不能查询医生
+                    if(auth.equals(AuthEnum.USER) && AuthEnum.of(accountDTO.getAuth()).equals(AuthEnum.DOCTOR)) {
+                        continue;
+                    }
+                    vauResps.add(vau(accountDTO));
+                }
+                // 查询自己的
+                if (auth.equals(AuthEnum.USER)) {
+                    vauResps.add(vau(account));
+                }
+//                return vauResps;
+        }
+
+        return PageBaseResp.empty();
     }
 
     public VAUResp vau(AccountDTO accountDTO) {

@@ -10,6 +10,8 @@ import org.james.gos.vaccines.account.service.adapter.AccountAdapter;
 import org.james.gos.vaccines.account.service.cache.AccountCache;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
+import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
+import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
 import org.james.gos.vaccines.common.event.AccountUpdateApplicationEvent;
 import org.james.gos.vaccines.common.exception.AccountErrorEnum;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
@@ -153,6 +155,14 @@ public class AccountService implements IAccountService {
         validate(aid);
         // 缓存中查找
         return accountCache.getAccountAll();
+    }
+
+    @Override
+    public PageBaseResp<AccountDTO> getAccountPage(Long aid, PageBaseReq request) {
+        // 判断权限
+        validate(aid);
+        // 缓存中查找
+        return accountCache.getAccountPage(request);
     }
 
     @Override

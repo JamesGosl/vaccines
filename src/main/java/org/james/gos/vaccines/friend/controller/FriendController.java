@@ -2,6 +2,7 @@ package org.james.gos.vaccines.friend.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
+import org.james.gos.vaccines.common.annotation.Aid;
 import org.james.gos.vaccines.common.doman.vo.request.IdReq;
 import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
 import org.james.gos.vaccines.common.utils.RequestHolder;
@@ -29,21 +30,21 @@ public class FriendController {
 
     @PutMapping
     @ApiModelProperty("好友请求")
-    public ApiResult<Void> insert(@Valid @RequestBody IdReq idReq) {
-        friendService.insert(RequestHolder.get().getId(), idReq.getId());
+    public ApiResult<Void> insert(@Aid Long aid, @Valid @RequestBody IdReq idReq) {
+        friendService.insert(aid, idReq.getId());
         return ApiResult.success();
     }
 
     @PostMapping
     @ApiModelProperty("更新好友")
-    public ApiResult<Void> update(@Valid @RequestBody IdReq idReq) {
-        friendService.update(RequestHolder.get().getId(), idReq.getId());
+    public ApiResult<Void> update(@Aid Long aid, @Valid @RequestBody IdReq idReq) {
+        friendService.update(aid, idReq.getId());
         return ApiResult.success();
     }
 
     @GetMapping("/list")
     @ApiModelProperty("获取待处理好友请求")
-    public ApiResult<List<FAUResp>> list() {
-        return ApiResult.success(friendService.list(RequestHolder.get().getId()));
+    public ApiResult<List<FAUResp>> list(@Aid Long aid) {
+        return ApiResult.success(friendService.list(aid));
     }
 }

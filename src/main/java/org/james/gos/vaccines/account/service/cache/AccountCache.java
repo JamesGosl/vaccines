@@ -11,6 +11,7 @@ import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.common.constant.CacheKey;
 import org.james.gos.vaccines.common.constant.RedisKey;
 import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
+import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
 import org.james.gos.vaccines.common.event.ClearCacheApplicationEvent;
 import org.james.gos.vaccines.common.utils.CacheUtils;
 import org.james.gos.vaccines.common.utils.RedisUtils;
@@ -46,6 +47,21 @@ public class AccountCache implements ApplicationListener<ClearCacheApplicationEv
 
         // 构建DTO
         return AccountDTO.build(accounts);
+    }
+
+    /**
+     * 获取分页账户信息
+     */
+    @Cacheable(cacheNames = CacheKey.ACCOUNT, key =  "'accountPage-' + #request.page + '-' + #request.limit")
+    public PageBaseResp<AccountDTO> getAccountPage(PageBaseReq request) {
+        // TODO PageHelper 无法与自研MyBatis 插件配合
+        Page<Account> pageUser = PageMethod.startPage(request.getPage(), request.getLimit());
+        accountMapper.selectAll();
+
+        if (pageUser.getTotal() > 0) {
+            return PageBaseResp.init(pageUser.getTotal(), AccountDTO.build(pageUser.getResult()));
+        }
+        return PageBaseResp.empty();
     }
 
     /**
@@ -113,4 +129,5 @@ public class AccountCache implements ApplicationListener<ClearCacheApplicationEv
 
         clear();
     }
+
 }

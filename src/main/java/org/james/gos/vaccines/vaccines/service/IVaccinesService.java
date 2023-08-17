@@ -1,6 +1,8 @@
 package org.james.gos.vaccines.vaccines.service;
 
 import org.james.gos.vaccines.common.doman.vo.request.IdReq;
+import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
+import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 import org.james.gos.vaccines.vaccines.doman.vo.response.VAUResp;
 
@@ -63,4 +65,13 @@ public interface IVaccinesService {
      * @param aid 账户id
      */
     List<VAUResp> vau(Long aid);
+
+    /**
+     * 疫苗信息集合 分页
+     *
+     * @param aid 账户id
+     * @param request 分页信息
+     */
+    @Deprecated
+    PageBaseResp<VAUResp> vau(Long aid, PageBaseReq request);
 }

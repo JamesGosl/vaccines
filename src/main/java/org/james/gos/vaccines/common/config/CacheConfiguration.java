@@ -10,6 +10,7 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,12 +27,14 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     @Primary
     public CacheManager caffeineCacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
-        // 方案一(常用)：定制化缓存Cache
-        // 本地缓存 5分钟过期 有的数据建议不要在本地缓存存放
+        // 本地缓存
         cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterWrite(5, TimeUnit.MINUTES)
-                .initialCapacity(100)
-                .maximumSize(200));
+                // 写入后过期时间
+                .expireAfterWrite(Duration.ofMinutes(5))
+                // 初始化条目
+                .initialCapacity(200)
+                // 最大条目
+                .maximumSize(1000));
         return cacheManager;
     }
 }

@@ -2,6 +2,7 @@ package org.james.gos.vaccines.system.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.james.gos.vaccines.common.annotation.Aid;
 import org.james.gos.vaccines.system.domain.vo.request.LoginReq;
 import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
 import org.james.gos.vaccines.common.utils.RequestHolder;
@@ -40,14 +41,14 @@ public class SystemController {
 
     @GetMapping("/info")
     @ApiOperation("获取系统初始化文件")
-    public String info() {
-        return systemService.info(RequestHolder.get().getId());
+    public String info(@Aid Long aid) {
+        return systemService.info(aid);
     }
 
     @GetMapping("/clear")
     @ApiOperation("清除系统缓存")
-    public ApiResult<Void> clear() {
-        systemService.clear(RequestHolder.get().getId());
+    public ApiResult<Void> clear(@Aid Long aid) {
+        systemService.clear(aid);
         return ApiResult.success();
     }
 }

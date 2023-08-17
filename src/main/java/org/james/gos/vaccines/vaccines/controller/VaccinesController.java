@@ -2,11 +2,12 @@ package org.james.gos.vaccines.vaccines.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Param;
+import org.james.gos.vaccines.common.annotation.Aid;
 import org.james.gos.vaccines.common.doman.vo.request.IdReq;
+import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
+import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
 import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
 import org.james.gos.vaccines.common.utils.RequestHolder;
-import org.james.gos.vaccines.vaccines.doman.entity.Vaccines;
 import org.james.gos.vaccines.vaccines.doman.vo.response.VAUResp;
 import org.james.gos.vaccines.vaccines.doman.vo.response.VaccinesResp;
 import org.james.gos.vaccines.vaccines.service.IVaccinesService;
@@ -43,20 +44,27 @@ public class VaccinesController {
 
     @GetMapping("/vau")
     @ApiOperation("获取疫苗列表")
-    public ApiResult<List<VAUResp>> vau() {
-        return ApiResult.success(vaccinesService.vau(RequestHolder.get().getId()));
+    public ApiResult<List<VAUResp>> vau(@Aid Long aid) {
+        return ApiResult.success(vaccinesService.vau(aid));
+    }
+
+    @GetMapping("/vauPage")
+    @ApiOperation("获取疫苗分页")
+    @Deprecated
+    public ApiResult<PageBaseResp<VAUResp>> vauPage(@Aid Long aid, @Valid PageBaseReq request) {
+        return ApiResult.success(vaccinesService.vau(aid, request));
     }
 
 
     @PostMapping("/upload")
     @ApiOperation("上传疫苗信息")
-    public ApiResult<Void> upload(@Valid IdReq idReq, @RequestParam MultipartFile file) {
+    public ApiResult<Void> upload(@Aid Long aid, @Valid IdReq idReq, @RequestParam MultipartFile file) {
         try {
             InputStream inputStream = file.getInputStream();
             byte[] bs = new byte[inputStream.available()];
             int read = inputStream.read(bs);
             String vaccines = new String(bs, StandardCharsets.UTF_8);
-            vaccinesService.upload(RequestHolder.get().getId(), idReq, vaccines);
+            vaccinesService.upload(aid, idReq, vaccines);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,7 +72,7 @@ public class VaccinesController {
     }
 
     @RequestMapping("download")
-    public void download(@Valid IdReq idReq, HttpServletResponse response) throws IOException {
-        vaccinesService.download(RequestHolder.get().getId(), idReq, response);
+    public void download(@Aid Long aid, @Valid IdReq idReq, HttpServletResponse response) throws IOException {
+        vaccinesService.download(aid, idReq, response);
     }
 }

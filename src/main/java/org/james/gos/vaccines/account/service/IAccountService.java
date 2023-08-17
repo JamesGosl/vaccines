@@ -3,6 +3,8 @@ package org.james.gos.vaccines.account.service;
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
 import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
 import org.james.gos.vaccines.account.doman.vo.response.AUResp;
+import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
+import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
 
 import java.util.List;
 
@@ -44,6 +46,15 @@ public interface IAccountService {
      * @return 账号信息
      */
     List<AccountDTO> getAccountAll(Long aid);
+
+    /**
+     * 获得所有账号信息
+     *
+     * @param aid 账号id
+     * @param request 分页请求
+     * @return 账号信息
+     */
+    PageBaseResp<AccountDTO> getAccountPage(Long aid, PageBaseReq request);
 
     /**
      * 增加更改账户

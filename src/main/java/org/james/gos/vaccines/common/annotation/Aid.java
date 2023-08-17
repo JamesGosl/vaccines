@@ -7,11 +7,5 @@ import java.lang.annotation.*;
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface TokenParam {
-
-    @AliasFor("name")
-    String value() default "id";
-
-    @AliasFor("value")
-    String name() default "id";
+public @interface Aid {
 }

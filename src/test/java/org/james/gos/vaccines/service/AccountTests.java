@@ -5,6 +5,8 @@ import org.james.gos.vaccines.VaccinesApplication;
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
 import org.james.gos.vaccines.account.doman.entity.Account;
 import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
+import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
+import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
 import org.james.gos.vaccines.system.domain.vo.request.LoginReq;
 import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
 import org.james.gos.vaccines.account.service.IAccountService;
@@ -205,5 +207,14 @@ public class AccountTests {
                 log.error(e.getMessage());
             }
         }
+    }
+
+    @Test
+    public void getAccountPage() {
+        PageBaseReq pageBaseReq = new PageBaseReq();
+        pageBaseReq.setPage(1);
+        pageBaseReq.setLimit(50);
+        PageBaseResp<AccountDTO> accountPage = accountService.getAccountPage(1L, pageBaseReq);
+        System.out.println();
     }
 }

@@ -2,6 +2,7 @@ package org.james.gos.vaccines.user.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.james.gos.vaccines.common.annotation.Aid;
 import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
 import org.james.gos.vaccines.common.utils.RequestHolder;
 import org.james.gos.vaccines.user.doman.vo.request.UserReq;
@@ -28,14 +29,14 @@ public class UserController {
 
     @GetMapping
     @ApiOperation("获取当前用户信息")
-    public ApiResult<UserResp> getUser() {
-        return ApiResult.success(userService.getUser(RequestHolder.get().getId()));
+    public ApiResult<UserResp> getUser(@Aid Long aid) {
+        return ApiResult.success(userService.getUser(aid));
     }
 
     @PostMapping
     @ApiOperation("更新当前用户信息")
-    public ApiResult<Void> updateUser(@Valid @RequestBody UserReq userReq) {
-        userService.updateUser(RequestHolder.get().getId(), userReq);
+    public ApiResult<Void> updateUser(@Aid Long aid, @Valid @RequestBody UserReq userReq) {
+        userService.updateUser(aid, userReq);
         return ApiResult.success();
     }
 }

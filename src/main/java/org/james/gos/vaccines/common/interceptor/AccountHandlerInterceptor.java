@@ -4,6 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.common.constant.RequestKey;
 import org.james.gos.vaccines.common.doman.vo.request.RequestInfo;
+import org.james.gos.vaccines.common.exception.AccountErrorEnum;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
 import org.james.gos.vaccines.common.utils.JwtUtils;
 import org.james.gos.vaccines.common.utils.RequestHolder;
@@ -40,7 +41,7 @@ public class AccountHandlerInterceptor implements HandlerInterceptor {
             }
         } catch (Exception e) {
         }
-        throw new AccountRuntimeException("暂未登陆");
+        throw new AccountRuntimeException(AccountErrorEnum.NOT_LOGIN);
     }
 
     // 中置

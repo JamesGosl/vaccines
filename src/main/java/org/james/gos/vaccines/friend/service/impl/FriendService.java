@@ -73,13 +73,11 @@ public class FriendService implements IFriendService {
     }
 
     public FriendDTO getFriend(Friend friend) {
-        // TODO 二级缓存
         return FriendDTO.build(friendMapper.selectOne(friend));
     }
 
     @Override
     public FriendDTO getFriend(Long id) {
-        // TODO 二级缓存
         return FriendDTO.build(friendMapper.selectByPrimaryKey(id));
     }
 
@@ -102,7 +100,6 @@ public class FriendService implements IFriendService {
 
     @Override
     public List<FriendDTO> getFriends(Long aid) {
-        // TODO 二级缓存
         Example example = new Example(Friend.class);
         example.createCriteria().andEqualTo("accountId", aid);
         return FriendDTO.build(friendMapper.selectByExample(example));
