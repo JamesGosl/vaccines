@@ -33,13 +33,16 @@ public class AccountDTO {
     private String description;
 
     public static AccountDTO build(Account account) {
+        if(Objects.isNull(account))
+            return null;
+
         AccountDTO accountDTO = new AccountDTO();
         BeanUtil.copyProperties(account, accountDTO);
         return accountDTO.setDescription(AuthEnum.of(account.getAuth()).getDesc());
     }
 
     public static List<AccountDTO> build(List<Account> account) {
-        if (Objects.isNull(account)) {
+        if (Objects.isNull(account) || account.isEmpty()) {
             return null;
         }
         return account.stream().map(AccountDTO::build).collect(Collectors.toList());

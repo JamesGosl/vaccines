@@ -8,6 +8,7 @@ import org.james.gos.vaccines.common.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -17,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @author James Gosl
  * @since 2023/08/15 20:04
  */
-@SpringBootConfiguration
+@Configuration
 public class UtilsConfiguration {
 
     @Bean

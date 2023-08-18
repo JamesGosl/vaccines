@@ -8,6 +8,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
+import org.james.gos.vaccines.user.doman.dto.UserDTO;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 import org.james.gos.vaccines.vaccines.doman.entity.Vaccines;
@@ -76,7 +77,7 @@ public class VaccinesAdapter {
         }
     }
 
-    public static VAUResp buildAUV(AccountDTO accountDTO, UserResp user, VaccinesDTO vaccines) {
+    public static VAUResp buildAUV(AccountDTO accountDTO, UserDTO user, VaccinesDTO vaccines) {
         VAUResp vauResp = new VAUResp();
         if(vaccines != null) {
             vauResp.setId(vaccines.getId());

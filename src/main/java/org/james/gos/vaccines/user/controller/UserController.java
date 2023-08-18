@@ -8,6 +8,7 @@ import org.james.gos.vaccines.common.utils.RequestHolder;
 import org.james.gos.vaccines.user.doman.vo.request.UserReq;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 import org.james.gos.vaccines.user.service.IUserService;
+import org.james.gos.vaccines.user.service.adapter.UserAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class UserController {
     @GetMapping
     @ApiOperation("获取当前用户信息")
     public ApiResult<UserResp> getUser(@Aid Long aid) {
-        return ApiResult.success(userService.getUser(aid));
+        return ApiResult.success(UserAdapter.build(userService.getUser(aid)));
     }
 
     @PostMapping

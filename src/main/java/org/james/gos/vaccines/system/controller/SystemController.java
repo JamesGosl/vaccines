@@ -35,7 +35,8 @@ public class SystemController {
 
     @GetMapping("/logout")
     @ApiOperation("退出")
-    public ApiResult<Void> logout() {
+    public ApiResult<Void> logout(@Aid Long aid) {
+        systemService.logout(aid);
         return ApiResult.success();
     }
 

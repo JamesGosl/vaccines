@@ -3,14 +3,14 @@ package org.james.gos.vaccines.system.service.impl;
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
 import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
-import org.james.gos.vaccines.common.event.ClearCacheApplicationEvent;
+import org.james.gos.vaccines.common.doman.enums.RedisChannelEnum;
 import org.james.gos.vaccines.common.utils.JwtUtils;
+import org.james.gos.vaccines.common.utils.RedisUtils;
 import org.james.gos.vaccines.system.domain.vo.response.LoginResp;
 import org.james.gos.vaccines.system.service.ISystemService;
-import org.james.gos.vaccines.system.service.SystemAdapter;
+import org.james.gos.vaccines.system.service.adapter.SystemAdapter;
 import org.james.gos.vaccines.system.service.cache.SystemCache;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -23,9 +23,6 @@ import java.util.Objects;
  */
 @Service
 public class SystemService implements ISystemService {
-
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     private IAccountService accountService;
     @Autowired
@@ -56,6 +53,9 @@ public class SystemService implements ISystemService {
 
     @Override
     public boolean verify(String token) {
+        if(Objects.isNull(token) || token.isEmpty())
+            return false;
+
         Long aid = jwtUtils.getAidOrNull(token);
         if (Objects.isNull(aid)) {
             return false;
@@ -77,7 +77,8 @@ public class SystemService implements ISystemService {
             case ADMIN:
             case DOCTOR:
             case USER:
-                applicationEventPublisher.publishEvent(new ClearCacheApplicationEvent(auth.name() + "-" + aid));
+                // Redis 发布/订阅 保证数据一致性
+                RedisUtils.publish(RedisChannelEnum.CLEAR, null);
         }
     }
 }

@@ -8,6 +8,7 @@ import org.james.gos.vaccines.friend.doman.dto.FriendDTO;
 import org.james.gos.vaccines.friend.doman.entity.Friend;
 import org.james.gos.vaccines.friend.doman.enums.FriendEnum;
 import org.james.gos.vaccines.friend.doman.vo.response.FAUResp;
+import org.james.gos.vaccines.user.doman.dto.UserDTO;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 
 import java.util.List;
@@ -39,7 +40,7 @@ public class FriendAdapter {
         return friend.setStatus(YesOrNoEnum.YES.getStatus()).setDescription(FriendEnum.SUCCESS.getDesc());
     }
 
-    public static FAUResp build(FriendDTO friendDTO, AccountDTO account, UserResp user) {
+    public static FAUResp build(FriendDTO friendDTO, AccountDTO account, UserDTO user) {
         FAUResp fauResp = new FAUResp();
         fauResp.setId(friendDTO.getId());
         fauResp.setUsername(account.getUsername());

@@ -7,7 +7,6 @@ import org.james.gos.vaccines.common.plugins.FieldSqlInjector;
 import org.james.gos.vaccines.common.plugins.LogicSqlInjector;
 import org.james.gos.vaccines.common.plugins.ShowSqlPlugin;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
@@ -26,7 +25,7 @@ import java.util.Properties;
  * @since 2023/08/14 23:15
  */
 @MapperScan(basePackages = "org.james.gos.vaccines", annotationClass = Repository.class)
-@SpringBootConfiguration
+@org.springframework.context.annotation.Configuration
 @EnableTransactionManagement
 public class MyBatisConfiguration {
 

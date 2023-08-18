@@ -7,6 +7,7 @@ import org.james.gos.vaccines.common.resolver.AidHandlerMethodArgumentResolver;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -21,7 +22,7 @@ import java.util.List;
  * @author James Gosl
  * @since 2023/08/16 14:58
  */
-@SpringBootConfiguration
+@Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
     /**

@@ -2,6 +2,7 @@ package org.james.gos.vaccines.common.config;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -17,8 +18,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
  * @author James Gosl
  * @since 2023/08/14 23:12
  */
+@Configuration
 @EnableSwagger2WebMvc
-@SpringBootConfiguration
 public class SwaggerConfiguration {
 
     @Bean(value = "defaultApi2")

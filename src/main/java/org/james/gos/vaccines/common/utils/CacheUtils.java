@@ -43,4 +43,11 @@ public class CacheUtils {
             cache.clear();
         }
     }
+
+    public static void del(String name, String key) {
+        Cache cache = getCache(name);
+        if (cache != null) {
+            cache.evict(key);
+        }
+    }
 }

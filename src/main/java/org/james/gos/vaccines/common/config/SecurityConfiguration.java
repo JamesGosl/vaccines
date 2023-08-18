@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @author James Gosl
  * @since 2023/08/14 20:26
  */
-@SpringBootConfiguration
+@Configuration
 @EnableConfigurationProperties(SecurityProperties.class)
 public class SecurityConfiguration {
 

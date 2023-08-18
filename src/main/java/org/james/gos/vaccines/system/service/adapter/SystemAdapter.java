@@ -1,4 +1,4 @@
-package org.james.gos.vaccines.system.service;
+package org.james.gos.vaccines.system.service.adapter;
 
 import cn.hutool.core.bean.BeanUtil;
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;

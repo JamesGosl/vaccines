@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import java.time.Duration;
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2023/08/15 16:18
  */
 @EnableCaching(proxyTargetClass = true)
-@SpringBootConfiguration
+@Configuration
 public class CacheConfiguration extends CachingConfigurerSupport {
 
     @Bean("caffeineCacheManager")

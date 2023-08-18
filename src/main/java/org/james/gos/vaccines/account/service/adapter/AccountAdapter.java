@@ -10,6 +10,7 @@ import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
 import org.james.gos.vaccines.common.plugins.DateUtils;
+import org.james.gos.vaccines.user.doman.dto.UserDTO;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class AccountAdapter {
         return account;
     }
 
-    public static AUResp buildAU(Account account, UserResp user) {
+    public static AUResp buildAU(AccountDTO account, UserDTO user) {
         AUResp auResp = new AUResp();
         auResp.setId(account.getId());
         auResp.setUsername(account.getUsername());

@@ -1,7 +1,5 @@
 package org.james.gos.vaccines.vaccines.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.page.PageMethod;
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
 import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
@@ -15,7 +13,7 @@ import org.james.gos.vaccines.common.exception.CommonErrorEnum;
 import org.james.gos.vaccines.common.exception.InsertRuntimeException;
 import org.james.gos.vaccines.friend.doman.dto.FriendDTO;
 import org.james.gos.vaccines.friend.service.IFriendService;
-import org.james.gos.vaccines.user.doman.vo.response.UserResp;
+import org.james.gos.vaccines.user.doman.dto.UserDTO;
 import org.james.gos.vaccines.user.service.IUserService;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 import org.james.gos.vaccines.vaccines.doman.vo.response.VAUResp;
@@ -58,7 +56,7 @@ public class VaccinesService implements IVaccinesService {
 
     @Override
     public void insertVaccines(Long aid) {
-        if (vaccinesMapper.insertSelective(VaccinesAdapter.build(aid)) == YesOrNoEnum.NO.getStatus()) {
+        if (YesOrNoEnum.NO.equals(vaccinesCache.inVaccines(VaccinesAdapter.build(aid)))) {
             throw new InsertRuntimeException(CommonErrorEnum.SYSTEM_ERROR);
         }
     }
@@ -79,7 +77,9 @@ public class VaccinesService implements IVaccinesService {
         VaccinesDTO vaccinesDTO = getVaccines(idReq.getId());
         if (vaccinesDTO.getAccountId().equals(aid) ||
                 AuthEnum.of(accountService.getAccount(aid).getAuth()).equals(AuthEnum.ADMIN)) {
-            vaccinesCache.upload(VaccinesAdapter.build(idReq.getId(), vaccines));
+            if (YesOrNoEnum.NO.equals(vaccinesCache.upVaccines(VaccinesAdapter.build(idReq.getId(), vaccines)))) {
+                throw new RuntimeException("更新失败");
+            }
         } else {
             throw new AccountRuntimeException(AccountErrorEnum.NOT_AUTH);
         }
@@ -115,7 +115,10 @@ public class VaccinesService implements IVaccinesService {
             // admin 获取所有信息
             case ADMIN:
                 List<AccountDTO> accountAll = accountService.getAccountAll(aid);
-                return accountAll.stream().map(this::vau).collect(Collectors.toList());
+                return accountAll.stream()
+                        // 只查询用户
+                        .filter(accountDTO -> AuthEnum.USER.equals(AuthEnum.of(accountDTO.getAuth())))
+                        .map(this::vau).collect(Collectors.toList());
             // doctor、user 获取关联的
             case DOCTOR:
             case USER:
@@ -184,7 +187,7 @@ public class VaccinesService implements IVaccinesService {
         // 账户信息
         Long aid = accountDTO.getId();
         // 用户信息
-        UserResp user = userService.getUser(aid);
+        UserDTO user = userService.getUser(aid);
         // 疫苗信息
         VaccinesDTO vaccines = getVaccinesByAid(aid);
         // 聚合

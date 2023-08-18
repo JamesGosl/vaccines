@@ -8,16 +8,17 @@ import org.james.gos.vaccines.account.mapper.AccountMapper;
 import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.account.service.adapter.AccountAdapter;
 import org.james.gos.vaccines.account.service.cache.AccountCache;
+import org.james.gos.vaccines.common.constant.RedisKey;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
 import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
 import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
-import org.james.gos.vaccines.common.event.AccountUpdateApplicationEvent;
+import org.james.gos.vaccines.common.event.RedisAccountApplicationEvent;
 import org.james.gos.vaccines.common.exception.AccountErrorEnum;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
 import org.james.gos.vaccines.common.exception.CommonErrorEnum;
+import org.james.gos.vaccines.common.utils.RedisUtils;
 import org.james.gos.vaccines.friend.service.IFriendService;
-import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 import org.james.gos.vaccines.user.service.IUserService;
 import org.james.gos.vaccines.vaccines.service.IVaccinesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AccountService implements IAccountService {
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
     @Resource
     private AccountMapper accountMapper;
     @Autowired
@@ -58,7 +57,9 @@ public class AccountService implements IAccountService {
     private IFriendService friendService;
 
     public AccountDTO login(String username, String password) {
-        Account account = accountCache.getAccount(username);
+        Example example = new Example(Account.class);
+        example.createCriteria().andEqualTo("username", username);
+        Account account = accountMapper.selectOneByExample(example);
 
         if (!Objects.isNull(account) && passwordEncoder.matches(password, account.getPassword())) {
             return AccountDTO.build(account);
@@ -97,7 +98,7 @@ public class AccountService implements IAccountService {
     @Transactional
     public void insert(Account account) {
         try {
-            if (YesOrNoEnum.of(accountMapper.insertSelective(account)).equals(YesOrNoEnum.NO)) {
+            if (YesOrNoEnum.NO.equals(accountCache.inAccount(account))) {
                 throw new AccountRuntimeException(CommonErrorEnum.SYSTEM_ERROR);
             }
         } catch (DuplicateKeyException e) {
@@ -111,14 +112,9 @@ public class AccountService implements IAccountService {
     }
 
     public void update(Account account) {
-        Long id = account.getId();
-
         // 更新失败则有问题
         try {
-            if (YesOrNoEnum.of(accountMapper.updateByPrimaryKeySelective(account)).equals(YesOrNoEnum.YES)) {
-                applicationEventPublisher.publishEvent(new AccountUpdateApplicationEvent(id));
-                accountCache.delAccount(id);
-            } else {
+            if (YesOrNoEnum.NO.equals(accountCache.upAccount(account))) {
                 throw new AccountRuntimeException(CommonErrorEnum.SYSTEM_ERROR);
             }
         } catch (DuplicateKeyException e) {
@@ -135,11 +131,8 @@ public class AccountService implements IAccountService {
         // 判断权限
         validate(aid);
 
-        // 删除，去缓存中删除
-        accountCache.delAccount(id);
-        // 发布用户更新事件
-        applicationEventPublisher.publishEvent(new AccountUpdateApplicationEvent(id));
-        if (YesOrNoEnum.NO.getStatus().equals(accountMapper.deleteByPrimaryKey(id))) {
+        // 删除
+        if (YesOrNoEnum.NO.equals(accountCache.delAccount(getAccount(id)))) {
             throw new AccountRuntimeException(CommonErrorEnum.SYSTEM_ERROR);
         }
     }
@@ -177,7 +170,7 @@ public class AccountService implements IAccountService {
     @Override
     public List<AUResp> au(Long aid, String username) {
         AccountDTO accountDTO = getAccount(aid);
-        List<Account> accounts = null;
+        List<AccountDTO> accounts = null;
 
         switch (AuthEnum.of(accountDTO.getAuth())) {
             // 支持模糊查询

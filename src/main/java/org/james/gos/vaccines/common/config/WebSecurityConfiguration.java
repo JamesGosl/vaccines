@@ -1,6 +1,6 @@
 //package org.james.gos.vaccines.common.config;
 //
-//import org.springframework.boot.SpringBootConfiguration;
+//import org.springframework.context.annotation.Configuration;
 //import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 //import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 //
@@ -10,7 +10,7 @@
 // * @author James Gosl
 // * @since 2023/08/15 16:51
 // */
-//@SpringBootConfiguration
+//@Configuration
 //public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 //
 //    @Override

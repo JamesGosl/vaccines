@@ -1,5 +1,6 @@
 package org.james.gos.vaccines.user.service;
 
+import org.james.gos.vaccines.user.doman.dto.UserDTO;
 import org.james.gos.vaccines.user.doman.vo.request.UserReq;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 
@@ -16,7 +17,7 @@ public interface IUserService {
      *
      * @param aid 账户信息
      */
-    UserResp getUser(Long aid);
+    UserDTO getUser(Long aid);
 
     /**
      * 更新用户信息

@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import lombok.Data;
 import org.james.gos.vaccines.user.doman.entity.User;
 
+import java.util.Objects;
+
 /**
  * UserDTO
  *
@@ -25,6 +27,9 @@ public class UserDTO {
     private String address;
 
     public static UserDTO build(User user) {
+        if (Objects.isNull(user))
+            return null;
+
         UserDTO userDTO = new UserDTO();
         BeanUtil.copyProperties(user, userDTO);
         return userDTO;

@@ -11,6 +11,8 @@ import org.james.gos.vaccines.friend.doman.vo.response.FAUResp;
 import org.james.gos.vaccines.friend.mapper.FriendMapper;
 import org.james.gos.vaccines.friend.service.IFriendService;
 import org.james.gos.vaccines.friend.service.adapter.FriendAdapter;
+import org.james.gos.vaccines.friend.service.cache.FriendCache;
+import org.james.gos.vaccines.user.doman.dto.UserDTO;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 import org.james.gos.vaccines.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,8 @@ import java.util.stream.Collectors;
 @Service
 public class FriendService implements IFriendService {
 
+    @Autowired
+    private FriendCache friendCache;
     @Autowired
     private FriendMapper friendMapper;
     @Autowired
@@ -78,17 +82,17 @@ public class FriendService implements IFriendService {
 
     @Override
     public FriendDTO getFriend(Long id) {
-        return FriendDTO.build(friendMapper.selectByPrimaryKey(id));
+        return friendCache.getFriend(id);
     }
 
     public void insert(Friend friend) {
-        if (YesOrNoEnum.of(friendMapper.insert(friend)).equals(YesOrNoEnum.NO)) {
+        if (YesOrNoEnum.NO.equals(friendCache.inFriend(friend))) {
             throw new RuntimeException("建立关系失败");
         }
     }
 
     public void update(Friend friend) {
-        if (YesOrNoEnum.of(friendMapper.updateByPrimaryKeySelective(friend)).equals(YesOrNoEnum.NO)) {
+        if (YesOrNoEnum.NO.equals(friendCache.upFriend(friend))) {
             throw new RuntimeException("更新关系失败");
         }
     }
@@ -100,9 +104,7 @@ public class FriendService implements IFriendService {
 
     @Override
     public List<FriendDTO> getFriends(Long aid) {
-        Example example = new Example(Friend.class);
-        example.createCriteria().andEqualTo("accountId", aid);
-        return FriendDTO.build(friendMapper.selectByExample(example));
+        return friendCache.getFriendList(aid);
     }
 
     @Override
@@ -117,7 +119,7 @@ public class FriendService implements IFriendService {
         return friends.stream().map(friendDTO -> {
             Long friendId = friendDTO.getFriendId();
             AccountDTO account = accountService.getAccount(friendId);
-            UserResp user = userService.getUser(friendId);
+            UserDTO user = userService.getUser(friendId);
             return FriendAdapter.build(friendDTO, account, user);
         }).collect(Collectors.toList());
     }
