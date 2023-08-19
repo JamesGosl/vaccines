@@ -1,9 +1,15 @@
-# Getting Started
+# 疫苗接种管理系统
 
-### Reference Documentation
-For further reference, please consider the following sections:
+## 项目背景
+随着新冠疫情的爆发，全球面临了前所未有的挑战和变革。这一突发事件对各个方面产生了深远影响，从公共卫生、经济、社会生活到科技发展，都发生了重大变化。疫苗接种管理系统是一个专门设计用于收集和管理疫苗接种数据的应用程序。该系统的主要目标是帮助卫生部门、医疗机构以及公共卫生组织更有效地收集、记录和分析疫苗接种信息。通过数字化流程，该系统将提高信息收集的准确性、实时性以及数据分析的效率，从而为疫苗接种策略和决策提供更有力的支持。
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.7.14/maven-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/2.7.14/maven-plugin/reference/html/#build-image)
+## 使用技术
+Knife4j、SpringBoot、MyBatis、Redis、Nginx、Maven、Tomcat、MySQL
 
+## 项目特点
+1. 通过Knife4j 搭配Postman 对项目进行接口调试。
+2. 通过Caffeine 完成一级缓存，通过Redis 完成二级缓存。
+4. 通过Hibernate-validation 搭配全局异常处理器完成统一接口响应。
+5. 通过SpringMVC 参数解析器实现通过注解完成必要的用户身份信息参数填充。
+6. 使用自研MyBatis 插件完成与MyBatisPlus 的自动填充时间、逻辑删除一样功能。
+4. 采用Redis 发布订阅模式搭配SpringBoot 事件监听机制加上策略模式的实现完成数据一致性。
