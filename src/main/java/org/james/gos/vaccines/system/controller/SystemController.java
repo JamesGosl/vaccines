@@ -5,9 +5,8 @@ import io.swagger.annotations.ApiOperation;
 import org.james.gos.vaccines.common.annotation.Aid;
 import org.james.gos.vaccines.system.domain.vo.request.LoginReq;
 import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
-import org.james.gos.vaccines.common.utils.RequestHolder;
 import org.james.gos.vaccines.system.domain.vo.response.LoginResp;
-import org.james.gos.vaccines.system.service.ISystemService;
+import org.james.gos.vaccines.system.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,7 @@ import javax.validation.Valid;
 public class SystemController {
 
     @Autowired
-    private ISystemService systemService;
+    private SystemService systemService;
 
     @PostMapping("/login")
     @ApiOperation("登录")

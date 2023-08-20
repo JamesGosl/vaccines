@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 import org.james.gos.vaccines.common.annotation.FieldFill;
 import org.james.gos.vaccines.common.annotation.TableField;
 import org.james.gos.vaccines.common.annotation.TableLogic;
-import org.james.gos.vaccines.common.plugins.IdWorker;
+import org.james.gos.vaccines.common.plugin.IdWorker;
 import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.Column;

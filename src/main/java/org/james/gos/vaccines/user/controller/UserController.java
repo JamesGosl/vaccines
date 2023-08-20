@@ -4,10 +4,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.james.gos.vaccines.common.annotation.Aid;
 import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
-import org.james.gos.vaccines.common.utils.RequestHolder;
 import org.james.gos.vaccines.user.doman.vo.request.UserReq;
 import org.james.gos.vaccines.user.doman.vo.response.UserResp;
-import org.james.gos.vaccines.user.service.IUserService;
+import org.james.gos.vaccines.user.service.UserService;
 import org.james.gos.vaccines.user.service.adapter.UserAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +25,7 @@ import javax.validation.Valid;
 public class UserController {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @GetMapping
     @ApiOperation("获取当前用户信息")

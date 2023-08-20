@@ -2,7 +2,7 @@ package org.james.gos.vaccines.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.james.gos.vaccines.VaccinesApplication;
-import org.james.gos.vaccines.common.utils.IdWorkerUtils;
+import org.james.gos.vaccines.common.util.IdWorkerUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

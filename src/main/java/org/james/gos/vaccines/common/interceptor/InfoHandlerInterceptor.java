@@ -4,8 +4,8 @@ import cn.hutool.extra.spring.SpringUtil;
 import org.james.gos.vaccines.common.doman.vo.request.RequestInfo;
 import org.james.gos.vaccines.common.exception.AccountErrorEnum;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
-import org.james.gos.vaccines.common.utils.JwtUtils;
-import org.james.gos.vaccines.common.utils.RequestHolder;
+import org.james.gos.vaccines.common.util.JwtUtils;
+import org.james.gos.vaccines.common.util.RequestHolder;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;

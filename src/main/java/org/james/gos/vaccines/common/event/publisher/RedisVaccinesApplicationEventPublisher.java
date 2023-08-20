@@ -1,9 +1,10 @@
 package org.james.gos.vaccines.common.event.publisher;
 
 import org.james.gos.vaccines.common.doman.enums.RedisChannelEnum;
-import org.james.gos.vaccines.common.event.RedisUserApplicationEvent;
 import org.james.gos.vaccines.common.event.RedisVaccinesApplicationEvent;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * RedisUserApplicationEventPublisher
@@ -12,11 +13,11 @@ import org.springframework.stereotype.Component;
  * @since 2023/08/18 18:50
  */
 @Component
-public class RedisVaccinesApplicationEventPublisher extends RedisApplicationEventPublisher {
+public class RedisVaccinesApplicationEventPublisher extends RedisApplicationEventPublisherBase {
 
     @Override
     public boolean support(RedisChannelEnum redisChannel) {
-        return RedisChannelEnum.VACCINES.equals(redisChannel);
+        return Objects.equals(RedisChannelEnum.VACCINES, redisChannel);
     }
 
     @Override

@@ -6,7 +6,7 @@ package org.james.gos.vaccines.common.event;
  * @author James Gosl
  * @since 2023/08/17 17:51
  */
-public class RedisTokenApplicationEvent extends RedisApplicationEvent<Long> {
+public class RedisTokenApplicationEvent extends RedisApplicationEventBase<Long> {
     private static final long serialVersionUID = 2904743399955570809L;
 
     public RedisTokenApplicationEvent(byte[] bytes) {

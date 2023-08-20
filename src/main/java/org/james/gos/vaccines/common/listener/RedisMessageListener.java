@@ -1,9 +1,8 @@
 package org.james.gos.vaccines.common.listener;
 
 import org.james.gos.vaccines.common.doman.enums.RedisChannelEnum;
-import org.james.gos.vaccines.common.event.publisher.RedisApplicationEventPublisher;
+import org.james.gos.vaccines.common.event.publisher.RedisApplicationEventPublisherBase;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,7 @@ public class RedisMessageListener implements MessageListener {
     public static final String SUBSCRIBE_LISTENER_PATTERN = "*.del.*";
 
     @Autowired
-    private List<RedisApplicationEventPublisher> redisApplicationEvents;
+    private List<RedisApplicationEventPublisherBase> redisApplicationEvents;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -31,7 +30,7 @@ public class RedisMessageListener implements MessageListener {
             return;
 
         // 策略模式分发事件
-        for (RedisApplicationEventPublisher redisApplicationEventPublisher : redisApplicationEvents) {
+        for (RedisApplicationEventPublisherBase redisApplicationEventPublisher : redisApplicationEvents) {
             if(redisApplicationEventPublisher.support(redisChannel)) {
                 redisApplicationEventPublisher.publishEvent(message.getBody());
             }

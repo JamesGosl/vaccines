@@ -13,10 +13,10 @@ import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
 import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
 import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
 import org.james.gos.vaccines.common.event.RedisAccountApplicationEvent;
-import org.james.gos.vaccines.common.event.RedisApplicationEvent;
+import org.james.gos.vaccines.common.event.RedisApplicationEventBase;
 import org.james.gos.vaccines.common.event.RedisClearApplicationEvent;
-import org.james.gos.vaccines.common.utils.CacheUtils;
-import org.james.gos.vaccines.common.utils.RedisUtils;
+import org.james.gos.vaccines.common.util.CacheUtils;
+import org.james.gos.vaccines.common.util.RedisUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationListener;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @Slf4j
-public class AccountCache implements ApplicationListener<RedisApplicationEvent<?>> {
+public class AccountCache implements ApplicationListener<RedisApplicationEventBase<?>> {
 
     @Resource
     private AccountMapper accountMapper;
@@ -153,7 +154,7 @@ public class AccountCache implements ApplicationListener<RedisApplicationEvent<?
     @CacheEvict(cacheNames = CacheKey.ACCOUNT, key = "'account-id-' + #account.id")
     public YesOrNoEnum inAccount(Account account) {
         YesOrNoEnum yesOrNo = YesOrNoEnum.of(accountMapper.insertSelective(account));
-        if (YesOrNoEnum.YES.equals(yesOrNo)) {
+        if (Objects.equals(YesOrNoEnum.YES, yesOrNo)) {
             AccountDTO dto = AccountDTO.build(account);
             if(Objects.nonNull(dto)) {
                 // 更新Redis 缓存
@@ -171,9 +172,9 @@ public class AccountCache implements ApplicationListener<RedisApplicationEvent<?
      * @param account 账户
      */
     @CacheEvict(cacheNames = CacheKey.ACCOUNT, key = "'account-id-' + #account.id")
-    public YesOrNoEnum upAccount(Account account) {
+    public YesOrNoEnum upAccount(@NotNull Account account) {
         YesOrNoEnum yesOrNo = YesOrNoEnum.of(accountMapper.updateByPrimaryKeySelective(account));
-        if (YesOrNoEnum.YES.equals(yesOrNo)) {
+        if (Objects.equals(YesOrNoEnum.YES, yesOrNo)) {
             AccountDTO dto = AccountDTO.build(account);
             // 更新Redis 缓存
             if (RedisUtils.set(RedisKey.getKey(RedisKey.ACCOUNT, dto.getId()), dto)) {
@@ -195,7 +196,7 @@ public class AccountCache implements ApplicationListener<RedisApplicationEvent<?
     @CacheEvict(cacheNames = CacheKey.ACCOUNT, key = "'account-id-' + #account.id")
     public YesOrNoEnum delAccount(AccountDTO account) {
         YesOrNoEnum yesOrNo = YesOrNoEnum.of(accountMapper.deleteByPrimaryKey(account.getId()));
-        if (YesOrNoEnum.YES.equals(yesOrNo)) {
+        if (Objects.equals(YesOrNoEnum.YES, yesOrNo)) {
             // 清除Redis 缓存
             if (RedisUtils.del(RedisKey.getAccount(account.getId(), account.getUsername()))) {
                 // Redis 发布/订阅 保证数据一致性
@@ -209,7 +210,7 @@ public class AccountCache implements ApplicationListener<RedisApplicationEvent<?
     }
 
     @Override
-    public void onApplicationEvent(RedisApplicationEvent event) {
+    public void onApplicationEvent(RedisApplicationEventBase event) {
         // 清除所有本地缓存事件
         if(event instanceof RedisClearApplicationEvent) {
             CacheUtils.del(CacheKey.ACCOUNT);

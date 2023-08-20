@@ -6,12 +6,12 @@ import org.james.gos.vaccines.common.constant.RedisKey;
 import org.james.gos.vaccines.common.constant.SystemKey;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
 import org.james.gos.vaccines.common.doman.enums.RedisChannelEnum;
-import org.james.gos.vaccines.common.event.RedisApplicationEvent;
+import org.james.gos.vaccines.common.event.RedisApplicationEventBase;
 import org.james.gos.vaccines.common.event.RedisClearApplicationEvent;
 import org.james.gos.vaccines.common.event.RedisTokenApplicationEvent;
-import org.james.gos.vaccines.common.utils.CacheUtils;
-import org.james.gos.vaccines.common.utils.FileUtils;
-import org.james.gos.vaccines.common.utils.RedisUtils;
+import org.james.gos.vaccines.common.util.CacheUtils;
+import org.james.gos.vaccines.common.util.FileUtils;
+import org.james.gos.vaccines.common.util.RedisUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationListener;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class SystemCache implements ApplicationListener<RedisApplicationEvent<?>> {
+public class SystemCache implements ApplicationListener<RedisApplicationEventBase<?>> {
 
     @Cacheable(cacheNames = CacheKey.SYSTEM, key = "'info' + #auth.auth")
     public String info(AuthEnum auth) {
@@ -55,7 +55,7 @@ public class SystemCache implements ApplicationListener<RedisApplicationEvent<?>
     }
 
     @Override
-    public void onApplicationEvent(RedisApplicationEvent event) {
+    public void onApplicationEvent(RedisApplicationEventBase event) {
         // 清除所有本地缓存事件
         if(event instanceof RedisClearApplicationEvent) {
             CacheUtils.del(CacheKey.SYSTEM);

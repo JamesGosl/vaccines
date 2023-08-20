@@ -6,7 +6,7 @@ package org.james.gos.vaccines.common.event;
  * @author James Gosl
  * @since 2023/08/17 14:54
  */
-public class RedisClearApplicationEvent extends RedisApplicationEvent<Void> {
+public class RedisClearApplicationEvent extends RedisApplicationEventBase<Void> {
     private static final long serialVersionUID = 8261766728133283054L;
 
     public RedisClearApplicationEvent(byte[] bytes) {

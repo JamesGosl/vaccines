@@ -3,17 +3,14 @@ package org.james.gos.vaccines.service;
 import lombok.extern.slf4j.Slf4j;
 import org.james.gos.vaccines.VaccinesApplication;
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
-import org.james.gos.vaccines.account.doman.entity.Account;
 import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
 import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
 import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
-import org.james.gos.vaccines.system.domain.vo.request.LoginReq;
-import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
-import org.james.gos.vaccines.account.service.IAccountService;
+import org.james.gos.vaccines.account.service.AccountService;
 import org.james.gos.vaccines.common.constant.RedisKey;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
 import org.james.gos.vaccines.system.domain.vo.response.LoginResp;
-import org.james.gos.vaccines.system.service.ISystemService;
+import org.james.gos.vaccines.system.service.SystemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,10 +26,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class AccountTests {
 
     @Autowired
-    private IAccountService accountService;
+    private AccountService accountService;
 
     @Autowired
-    private ISystemService systemService;
+    private SystemService systemService;
 
     @Test
     public void redisKey() {

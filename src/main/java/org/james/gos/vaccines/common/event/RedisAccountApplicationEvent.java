@@ -1,7 +1,7 @@
 package org.james.gos.vaccines.common.event;
 
 import org.james.gos.vaccines.account.doman.dto.AccountDTO;
-import org.james.gos.vaccines.common.utils.JsonUtils;
+import org.james.gos.vaccines.common.util.JsonUtils;
 
 /**
  * 账户更新事件
@@ -9,7 +9,7 @@ import org.james.gos.vaccines.common.utils.JsonUtils;
  * @author James Gosl
  * @since 2023/08/17 17:51
  */
-public class RedisAccountApplicationEvent extends RedisApplicationEvent<AccountDTO> {
+public class RedisAccountApplicationEvent extends RedisApplicationEventBase<AccountDTO> {
     private static final long serialVersionUID = 2904743399955570809L;
 
     public RedisAccountApplicationEvent(byte[] bytes) {

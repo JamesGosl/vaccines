@@ -5,17 +5,14 @@ import org.james.gos.vaccines.common.constant.CacheKey;
 import org.james.gos.vaccines.common.constant.RedisKey;
 import org.james.gos.vaccines.common.doman.enums.RedisChannelEnum;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
-import org.james.gos.vaccines.common.event.RedisApplicationEvent;
+import org.james.gos.vaccines.common.event.RedisApplicationEventBase;
 import org.james.gos.vaccines.common.event.RedisClearApplicationEvent;
 import org.james.gos.vaccines.common.event.RedisFriendApplicationEvent;
-import org.james.gos.vaccines.common.event.RedisVaccinesApplicationEvent;
-import org.james.gos.vaccines.common.utils.CacheUtils;
-import org.james.gos.vaccines.common.utils.RedisUtils;
+import org.james.gos.vaccines.common.util.CacheUtils;
+import org.james.gos.vaccines.common.util.RedisUtils;
 import org.james.gos.vaccines.friend.doman.dto.FriendDTO;
 import org.james.gos.vaccines.friend.doman.entity.Friend;
 import org.james.gos.vaccines.friend.mapper.FriendMapper;
-import org.james.gos.vaccines.friend.service.impl.FriendService;
-import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -37,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @Slf4j
-public class FriendCache implements ApplicationListener<RedisApplicationEvent<?>> {
+public class FriendCache implements ApplicationListener<RedisApplicationEventBase<?>> {
     @Autowired
     private FriendMapper friendMapper;
 
@@ -97,7 +94,7 @@ public class FriendCache implements ApplicationListener<RedisApplicationEvent<?>
      */
     public YesOrNoEnum inFriend(Friend friend) {
         YesOrNoEnum yesOrNo = YesOrNoEnum.of(friendMapper.insertSelective(friend));
-        if(YesOrNoEnum.YES.equals(yesOrNo)) {
+        if(Objects.equals(YesOrNoEnum.YES, yesOrNo)) {
             FriendDTO friendDTO = FriendDTO.build(friend);
             // 加入缓存
             RedisUtils.set(RedisKey.getFriend(friend.getId(), friend.getAccountId()), friendDTO);
@@ -115,7 +112,7 @@ public class FriendCache implements ApplicationListener<RedisApplicationEvent<?>
     @CacheEvict(cacheNames = CacheKey.FRIEND, key = "'friend-id-' + #friend.id")
     public YesOrNoEnum upFriend(Friend friend) {
         YesOrNoEnum yesOrNo = YesOrNoEnum.of(friendMapper.updateByPrimaryKeySelective(friend));
-        if(YesOrNoEnum.YES.equals(yesOrNo)) {
+        if(Objects.equals(YesOrNoEnum.YES, yesOrNo)) {
             FriendDTO friendDTO = FriendDTO.build(friend);
             // 更新缓存
             if (RedisUtils.set(RedisKey.getFriend(friend.getId(), friend.getAccountId()), friendDTO)) {
@@ -130,7 +127,7 @@ public class FriendCache implements ApplicationListener<RedisApplicationEvent<?>
     }
 
     @Override
-    public void onApplicationEvent(RedisApplicationEvent event) {
+    public void onApplicationEvent(RedisApplicationEventBase event) {
         if(event instanceof RedisClearApplicationEvent) {
             CacheUtils.del(CacheKey.FRIEND);
         }

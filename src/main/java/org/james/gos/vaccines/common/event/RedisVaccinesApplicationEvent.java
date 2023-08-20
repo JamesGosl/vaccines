@@ -1,7 +1,6 @@
 package org.james.gos.vaccines.common.event;
 
-import org.james.gos.vaccines.common.utils.JsonUtils;
-import org.james.gos.vaccines.user.doman.dto.UserDTO;
+import org.james.gos.vaccines.common.util.JsonUtils;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 
 /**
@@ -10,7 +9,7 @@ import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
  * @author James Gosl
  * @since 2023/08/18 18:48
  */
-public class RedisVaccinesApplicationEvent extends RedisApplicationEvent<VaccinesDTO> {
+public class RedisVaccinesApplicationEvent extends RedisApplicationEventBase<VaccinesDTO> {
     private static final long serialVersionUID = 4374436903523930552L;
 
     public RedisVaccinesApplicationEvent(byte[] bytes) {

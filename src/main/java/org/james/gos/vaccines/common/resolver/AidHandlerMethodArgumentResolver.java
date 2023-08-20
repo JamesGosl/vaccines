@@ -1,7 +1,7 @@
 package org.james.gos.vaccines.common.resolver;
 
 import org.james.gos.vaccines.common.annotation.Aid;
-import org.james.gos.vaccines.common.utils.RequestHolder;
+import org.james.gos.vaccines.common.util.RequestHolder;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;

@@ -1,14 +1,12 @@
 package org.james.gos.vaccines.common.interceptor;
 
 import cn.hutool.extra.spring.SpringUtil;
-import org.james.gos.vaccines.account.service.IAccountService;
 import org.james.gos.vaccines.common.constant.RequestKey;
 import org.james.gos.vaccines.common.doman.vo.request.RequestInfo;
 import org.james.gos.vaccines.common.exception.AccountErrorEnum;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
-import org.james.gos.vaccines.common.utils.JwtUtils;
-import org.james.gos.vaccines.common.utils.RequestHolder;
-import org.james.gos.vaccines.system.service.ISystemService;
+import org.james.gos.vaccines.common.util.RequestHolder;
+import org.james.gos.vaccines.system.service.SystemService;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,10 +21,10 @@ import java.util.Objects;
  * @since 2023/08/16 15:15
  */
 public class AccountHandlerInterceptor implements HandlerInterceptor {
-    private static ISystemService systemService;
+    private static SystemService systemService;
 
     static {
-        AccountHandlerInterceptor.systemService = SpringUtil.getBean(ISystemService.class);
+        AccountHandlerInterceptor.systemService = SpringUtil.getBean(SystemService.class);
     }
 
     // 前置

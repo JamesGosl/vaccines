@@ -5,11 +5,11 @@ import org.james.gos.vaccines.common.constant.CacheKey;
 import org.james.gos.vaccines.common.constant.RedisKey;
 import org.james.gos.vaccines.common.doman.enums.RedisChannelEnum;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
-import org.james.gos.vaccines.common.event.RedisApplicationEvent;
+import org.james.gos.vaccines.common.event.RedisApplicationEventBase;
 import org.james.gos.vaccines.common.event.RedisClearApplicationEvent;
 import org.james.gos.vaccines.common.event.RedisUserApplicationEvent;
-import org.james.gos.vaccines.common.utils.CacheUtils;
-import org.james.gos.vaccines.common.utils.RedisUtils;
+import org.james.gos.vaccines.common.util.CacheUtils;
+import org.james.gos.vaccines.common.util.RedisUtils;
 import org.james.gos.vaccines.user.doman.dto.UserDTO;
 import org.james.gos.vaccines.user.doman.entity.User;
 import org.james.gos.vaccines.user.mapper.UserMapper;
@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 @Component
 @Slf4j
-public class UserCache implements ApplicationListener<RedisApplicationEvent<?>> {
+public class UserCache implements ApplicationListener<RedisApplicationEventBase<?>> {
     @Autowired
     private UserMapper userMapper;
 
@@ -61,7 +61,7 @@ public class UserCache implements ApplicationListener<RedisApplicationEvent<?>> 
      */
     public YesOrNoEnum inUser(User user) {
         YesOrNoEnum yesOrNo = YesOrNoEnum.of(userMapper.insertSelective(user));
-        if(YesOrNoEnum.YES.equals(yesOrNo)) {
+        if(Objects.equals(YesOrNoEnum.YES, yesOrNo)) {
             // 加入缓存
             RedisUtils.set(RedisKey.getKey(RedisKey.USER, user.getAccountId()), UserDTO.build(user));
             // 发布事件
@@ -78,7 +78,7 @@ public class UserCache implements ApplicationListener<RedisApplicationEvent<?>> 
     @CacheEvict(cacheNames = CacheKey.USER, key = "'user-aid-' + #user.accountId")
     public YesOrNoEnum upUser(User user) {
         YesOrNoEnum yesOrNo = YesOrNoEnum.of(userMapper.updateByPrimaryKeySelective(user));
-        if (YesOrNoEnum.YES.equals(yesOrNo)) {
+        if (Objects.equals(YesOrNoEnum.YES, yesOrNo)) {
             UserDTO userDTO = UserDTO.build(user);
             // 更新缓存
             if (RedisUtils.set(RedisKey.getKey(RedisKey.USER, user.getAccountId()), userDTO)) {
@@ -107,7 +107,7 @@ public class UserCache implements ApplicationListener<RedisApplicationEvent<?>> 
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("accountId", aid);
         YesOrNoEnum yesOrNo = YesOrNoEnum.of(userMapper.deleteByExample(example));
-        if(YesOrNoEnum.YES.equals(yesOrNo)) {
+        if(Objects.equals(YesOrNoEnum.YES, yesOrNo)) {
             // 删除缓存
             if (RedisUtils.del(RedisKey.getKey(RedisKey.USER, aid))) {
                 // 发布事件
@@ -121,7 +121,7 @@ public class UserCache implements ApplicationListener<RedisApplicationEvent<?>> 
     }
 
     @Override
-    public void onApplicationEvent(RedisApplicationEvent event) {
+    public void onApplicationEvent(RedisApplicationEventBase event) {
         if(event instanceof RedisClearApplicationEvent) {
             CacheUtils.del(CacheKey.USER);
         }

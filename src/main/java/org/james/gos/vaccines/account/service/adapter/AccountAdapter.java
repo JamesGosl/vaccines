@@ -9,9 +9,8 @@ import org.james.gos.vaccines.account.doman.vo.response.AUResp;
 import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
 import org.james.gos.vaccines.common.doman.enums.AuthEnum;
 import org.james.gos.vaccines.common.exception.AccountRuntimeException;
-import org.james.gos.vaccines.common.plugins.DateUtils;
+import org.james.gos.vaccines.common.util.DateUtils;
 import org.james.gos.vaccines.user.doman.dto.UserDTO;
-import org.james.gos.vaccines.user.doman.vo.response.UserResp;
 
 import java.util.List;
 import java.util.Objects;

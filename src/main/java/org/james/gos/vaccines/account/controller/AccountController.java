@@ -6,13 +6,12 @@ import org.james.gos.vaccines.account.doman.vo.request.AccountReq;
 import org.james.gos.vaccines.account.doman.vo.request.UsernameReq;
 import org.james.gos.vaccines.account.doman.vo.response.AUResp;
 import org.james.gos.vaccines.account.doman.vo.response.AccountResp;
-import org.james.gos.vaccines.account.service.IAccountService;
+import org.james.gos.vaccines.account.service.AccountService;
 import org.james.gos.vaccines.account.service.adapter.AccountAdapter;
 import org.james.gos.vaccines.common.annotation.Aid;
 import org.james.gos.vaccines.common.doman.vo.request.IdReq;
 import org.james.gos.vaccines.common.doman.vo.request.IdsReq;
 import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
-import org.james.gos.vaccines.common.utils.RequestHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +30,7 @@ import java.util.List;
 public class AccountController {
 
     @Autowired
-    private IAccountService accountService;
+    private AccountService accountService;
 
     @GetMapping
     @ApiOperation("获取当前账号信息")

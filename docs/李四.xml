@@ -1,0 +1,29 @@
+<?xml version='1.0' ?>
+
+	    <users>
+		    
+			<name>李四</name>
+			<age>23</age>
+			<gender>男</gender>
+			<brith>1998-10-1</brith>
+			<hist>酒精过敏</hist>
+		
+		<Vaccinations>
+		 	<Vaccination id='1'>
+				<name>新型冠状病毒肺炎灭活疫苗</name>
+				<time>2021-08-25 15:50:00</time>
+				<dose>2</dose>
+				<Vaccine_batch_number>202107C0388</Vaccine_batch_number>
+                <manufacturer>成都生物</manufacturer>
+				<Inoculation_unit>江西省赣州市章贡区水南街道卫生服务中心</Inoculation_unit>
+			</Vaccination>
+			<Vaccination id='2'>
+				<name>新型冠状病毒肺炎灭活疫苗</name>
+				<time>2021-08-25 15:50:00</time>
+				<dose>2</dose>
+				<Vaccine_batch_number>202107C0388</Vaccine_batch_number>
+                <manufacturer>成都生物</manufacturer>
+				<Inoculation_unit>江西省赣州市章贡区水南街道卫生服务中心</Inoculation_unit>
+			</Vaccination>
+		</Vaccinations>
+</users>

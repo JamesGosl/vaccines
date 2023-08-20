@@ -1,7 +1,7 @@
 package org.james.gos.vaccines.common.interceptor;
 
 import org.james.gos.vaccines.common.doman.vo.request.RequestInfo;
-import org.james.gos.vaccines.common.utils.RequestHolder;
+import org.james.gos.vaccines.common.util.RequestHolder;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;

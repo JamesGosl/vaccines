@@ -5,11 +5,11 @@ import org.james.gos.vaccines.common.constant.CacheKey;
 import org.james.gos.vaccines.common.constant.RedisKey;
 import org.james.gos.vaccines.common.doman.enums.RedisChannelEnum;
 import org.james.gos.vaccines.common.doman.enums.YesOrNoEnum;
-import org.james.gos.vaccines.common.event.RedisApplicationEvent;
+import org.james.gos.vaccines.common.event.RedisApplicationEventBase;
 import org.james.gos.vaccines.common.event.RedisClearApplicationEvent;
 import org.james.gos.vaccines.common.event.RedisVaccinesApplicationEvent;
-import org.james.gos.vaccines.common.utils.CacheUtils;
-import org.james.gos.vaccines.common.utils.RedisUtils;
+import org.james.gos.vaccines.common.util.CacheUtils;
+import org.james.gos.vaccines.common.util.RedisUtils;
 import org.james.gos.vaccines.vaccines.doman.dto.VaccinesDTO;
 import org.james.gos.vaccines.vaccines.doman.entity.Vaccines;
 import org.james.gos.vaccines.vaccines.mapper.VaccinesMapper;
@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 @Component
 @Slf4j
-public class VaccinesCache implements ApplicationListener<RedisApplicationEvent<?>> {
+public class VaccinesCache implements ApplicationListener<RedisApplicationEventBase<?>> {
 
     @Autowired
     private VaccinesMapper vaccinesMapper;
@@ -82,7 +82,7 @@ public class VaccinesCache implements ApplicationListener<RedisApplicationEvent<
      */
     public YesOrNoEnum inVaccines(Vaccines vaccines) {
         YesOrNoEnum yesOrNo = YesOrNoEnum.of(vaccinesMapper.insertSelective(vaccines));
-        if (YesOrNoEnum.YES.equals(yesOrNo)) {
+        if (Objects.equals(YesOrNoEnum.YES, yesOrNo)) {
             VaccinesDTO vaccinesDTO = VaccinesDTO.build(vaccines);
             // 加入缓存
             if (RedisUtils.set(RedisKey.getVaccines(vaccinesDTO.getId(), vaccinesDTO.getAccountId()), vaccinesDTO)) {
@@ -104,7 +104,7 @@ public class VaccinesCache implements ApplicationListener<RedisApplicationEvent<
     @CacheEvict(cacheNames = CacheKey.VACCINES, key = "'vaccines-aid-' + #vaccines.accountId")
     public YesOrNoEnum upVaccines(Vaccines vaccines) {
         YesOrNoEnum yesOrNo = YesOrNoEnum.of(vaccinesMapper.updateByPrimaryKeySelective(vaccines));
-        if (YesOrNoEnum.YES.equals(yesOrNo)) {
+        if (Objects.equals(YesOrNoEnum.YES, yesOrNo)) {
             VaccinesDTO vaccinesDTO = VaccinesDTO.build(vaccines);
             // 更新缓存
             if (RedisUtils.set(RedisKey.getVaccines(vaccinesDTO.getId(), vaccinesDTO.getAccountId()), vaccinesDTO)) {
@@ -118,7 +118,7 @@ public class VaccinesCache implements ApplicationListener<RedisApplicationEvent<
     }
 
     @Override
-    public void onApplicationEvent(RedisApplicationEvent event) {
+    public void onApplicationEvent(RedisApplicationEventBase event) {
         if(event instanceof RedisClearApplicationEvent) {
             CacheUtils.del(CacheKey.VACCINES);
         }

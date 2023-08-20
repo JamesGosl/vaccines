@@ -4,6 +4,8 @@ import org.james.gos.vaccines.common.doman.enums.RedisChannelEnum;
 import org.james.gos.vaccines.common.event.RedisUserApplicationEvent;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * RedisUserApplicationEventPublisher
  *
@@ -11,11 +13,11 @@ import org.springframework.stereotype.Component;
  * @since 2023/08/18 18:50
  */
 @Component
-public class RedisUserApplicationEventPublisher extends RedisApplicationEventPublisher {
+public class RedisUserApplicationEventPublisher extends RedisApplicationEventPublisherBase {
 
     @Override
     public boolean support(RedisChannelEnum redisChannel) {
-        return RedisChannelEnum.USER.equals(redisChannel);
+        return Objects.equals(RedisChannelEnum.USER, redisChannel);
     }
 
     @Override

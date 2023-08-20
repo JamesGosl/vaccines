@@ -7,10 +7,9 @@ import org.james.gos.vaccines.common.doman.vo.request.IdReq;
 import org.james.gos.vaccines.common.doman.vo.request.PageBaseReq;
 import org.james.gos.vaccines.common.doman.vo.response.PageBaseResp;
 import org.james.gos.vaccines.common.doman.vo.response.ApiResult;
-import org.james.gos.vaccines.common.utils.RequestHolder;
 import org.james.gos.vaccines.vaccines.doman.vo.response.VAUResp;
 import org.james.gos.vaccines.vaccines.doman.vo.response.VaccinesResp;
-import org.james.gos.vaccines.vaccines.service.IVaccinesService;
+import org.james.gos.vaccines.vaccines.service.VaccinesService;
 import org.james.gos.vaccines.vaccines.service.apadter.VaccinesAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,7 @@ import java.util.List;
 @Api(tags = "疫苗 相关接口")
 public class VaccinesController {
     @Autowired
-    private IVaccinesService vaccinesService;
+    private VaccinesService vaccinesService;
 
     @GetMapping
     @ApiOperation("获取疫苗信息")
